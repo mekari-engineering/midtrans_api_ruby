@@ -4,7 +4,7 @@ require 'spec_helper'
 
 describe MidtransApi::Api::Check::Status do
   let(:client) do
-    MidtransApi::Client.new(client_key: 'client_key', server_key: 'server_key', midtrans_env: 'midtrans_env')
+    MidtransApi::Client.new(client: 'client_key', server: 'server_key', sandbox: true)
   end
 
   let(:dummy_response) do

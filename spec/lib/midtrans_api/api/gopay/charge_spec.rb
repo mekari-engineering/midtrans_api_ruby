@@ -4,7 +4,12 @@ require 'spec_helper'
 
 RSpec.describe MidtransApi::Api::Gopay::Charge do
   let(:client) do
-    MidtransApi::Client.new(client_key: 'client_key', server_key: 'server_key', midtrans_env: 'midtrans_env', notification_url: 'someapps://callback')
+    MidtransApi::Client.new(
+      client: 'client_key',
+      server: 'server_key',
+      sandbox: true,
+      notification: 'someapps://callback'
+    )
   end
 
   let(:dummy_transaction_details) do

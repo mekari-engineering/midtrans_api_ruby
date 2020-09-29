@@ -6,20 +6,20 @@ describe MidtransApi::Client do
   describe '#initialize' do
     let(:params) do
       {
-        client_key: 'client_key',
-        server_key: 'server_key',
-        midtrans_env: 'midtrans_env',
-        notification_url: 'notification_url'
+        client: 'client_key',
+        server: 'server_key',
+        sandbox: true,
+        notification: 'notification_url'
       }
     end
 
     shared_examples 'set given params' do
       it do
         config = subject.instance_variable_get(:@config)
-        expect(config.client_key).to        eq params[:client_key]
-        expect(config.server_key).to        eq params[:server_key]
-        expect(config.notification_url).to  eq params[:notification_url]
-        expect(config.midtrans_env).to      eq params[:midtrans_env]
+        expect(config.client_key).to        eq params[:client]
+        expect(config.server_key).to        eq params[:server]
+        expect(config.notification_url).to  eq params[:notification]
+        expect(config.sandbox_mode).to      eq params[:sandbox]
       end
     end
 
@@ -34,10 +34,10 @@ describe MidtransApi::Client do
     context 'when pass the block' do
       subject do
         MidtransApi::Client.new do |client|
-          client.client_key       = params[:client_key]
-          client.server_key       = params[:server_key]
-          client.notification_url = params[:notification_url]
-          client.midtrans_env     = params[:midtrans_env]
+          client.client_key       = params[:client]
+          client.server_key       = params[:server]
+          client.notification_url = params[:notification]
+          client.sandbox_mode     = params[:sandbox]
         end
       end
 
@@ -48,10 +48,10 @@ describe MidtransApi::Client do
   context 'client initialize' do
     let(:client) do
       MidtransApi::Client.new(
-        client_key: 'client_key',
-        server_key: 'server_key',
-        midtrans_env: 'midtrans_env',
-        notification_url: 'someapps://callback'
+        client: 'client_key',
+        server: 'server_key',
+        sandbox: true,
+        notification: 'someapps://callback'
       )
     end
 

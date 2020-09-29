@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.name          = 'mekari_midtrans_api'
   spec.version       = MidtransApi::Version::VERSION
   spec.authors       = ['Fadli Zul Fahmi']
-  spec.email         = ['mekari@fadli.dev']
+  spec.email         = ['fadli.fahmi@mekari.com']
 
   spec.summary       = 'Mekari Midtrans API Wrapper'
   spec.description   = "Let's make installment credit card using Midtrans!"
