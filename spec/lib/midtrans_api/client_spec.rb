@@ -23,6 +23,26 @@ describe MidtransApi::Client do
       end
     end
 
+    context 'midtrans sandbox' do
+      it '#true' do
+        client = described_class.new(
+          client: 'client_key',
+          server: 'server_key',
+          sandbox: true
+        )
+        expect(client.config.api_url).to eq MidtransApi::API_SANDBOX_URL
+      end
+
+      it '#false' do
+        client = described_class.new(
+          client: 'client_key',
+          server: 'server_key',
+          sandbox: false
+        )
+        expect(client.config.api_url).to eq MidtransApi::API_PRODUCTION_URL
+      end
+    end
+
     context 'when pass the params' do
       subject do
         MidtransApi::Client.new(params)
