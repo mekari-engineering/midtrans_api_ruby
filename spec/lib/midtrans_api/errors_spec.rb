@@ -5,8 +5,8 @@ require 'spec_helper'
 RSpec.describe MidtransApi::Errors do
   let(:client) do
     MidtransApi::Client.new(
-      client: 'client_key',
-      server: 'server_key',
+      client_key: 'client_key',
+      server_key: 'server_key',
       sandbox: true
     )
   end

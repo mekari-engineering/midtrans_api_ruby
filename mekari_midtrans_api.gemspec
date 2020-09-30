@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['fadli.fahmi@mekari.com']
 
   spec.summary       = 'Mekari Midtrans API Wrapper'
-  spec.description   = "Let's make installment credit card using Midtrans!"
+  spec.description   = 'Ruby Wrapper for Midtrans Payment API.'
   spec.homepage      = 'https://github.com/mekari-engineering/midtrans_api_ruby'
   spec.license       = 'MIT'
 

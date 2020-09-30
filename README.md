@@ -25,10 +25,10 @@ Or install it yourself as:
 require 'midtrans_api'
 
 midtrans = MidtransApi::Client.new(
-  client: 'YOUR-CLIENT-KEY',
-  server: 'YOUR-SERVER-KEY',
+  client_key: 'YOUR-CLIENT-KEY',
+  server_key: 'YOUR-SERVER-KEY',
   sandbox: true|false
-  notification: 'https://example.com/callback'
+  notification_url: 'https://example.com/callback'
 )
 
 # or

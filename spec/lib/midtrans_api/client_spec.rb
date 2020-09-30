@@ -6,19 +6,19 @@ describe MidtransApi::Client do
   describe '#initialize' do
     let(:params) do
       {
-        client: 'client_key',
-        server: 'server_key',
+        client_key: 'client_key',
+        server_key: 'server_key',
         sandbox: true,
-        notification: 'notification_url'
+        notification_url: 'notification_url'
       }
     end
 
     shared_examples 'set given params' do
       it do
         config = subject.instance_variable_get(:@config)
-        expect(config.client_key).to        eq params[:client]
-        expect(config.server_key).to        eq params[:server]
-        expect(config.notification_url).to  eq params[:notification]
+        expect(config.client_key).to        eq params[:client_key]
+        expect(config.server_key).to        eq params[:server_key]
+        expect(config.notification_url).to  eq params[:notification_url]
         expect(config.sandbox_mode).to      eq params[:sandbox]
       end
     end
@@ -26,8 +26,8 @@ describe MidtransApi::Client do
     context 'midtrans sandbox' do
       it '#true' do
         client = described_class.new(
-          client: 'client_key',
-          server: 'server_key',
+          client_key: 'client_key',
+          server_key: 'server_key',
           sandbox: true
         )
         expect(client.config.api_url).to eq MidtransApi::API_SANDBOX_URL
@@ -35,8 +35,8 @@ describe MidtransApi::Client do
 
       it '#false' do
         client = described_class.new(
-          client: 'client_key',
-          server: 'server_key',
+          client_key: 'client_key',
+          server_key: 'server_key',
           sandbox: false
         )
         expect(client.config.api_url).to eq MidtransApi::API_PRODUCTION_URL
@@ -54,9 +54,9 @@ describe MidtransApi::Client do
     context 'when pass the block' do
       subject do
         MidtransApi::Client.new do |client|
-          client.client_key       = params[:client]
-          client.server_key       = params[:server]
-          client.notification_url = params[:notification]
+          client.client_key       = params[:client_key]
+          client.server_key       = params[:server_key]
+          client.notification_url = params[:notification_url]
           client.sandbox_mode     = params[:sandbox]
         end
       end
@@ -68,10 +68,10 @@ describe MidtransApi::Client do
   context 'client initialize' do
     let(:client) do
       MidtransApi::Client.new(
-        client: 'client_key',
-        server: 'server_key',
+        client_key: 'client_key',
+        server_key: 'server_key',
         sandbox: true,
-        notification: 'someapps://callback'
+        notification_url: 'someapps://callback'
       )
     end
 

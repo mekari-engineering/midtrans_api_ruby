@@ -9,9 +9,9 @@ module MidtransApi
     attr_reader   :api_version
 
     def initialize(options = {})
-      @client_key       = options[:client]
-      @server_key       = options[:server]
-      @notification_url = options[:notification] || nil
+      @client_key       = options[:client_key]
+      @server_key       = options[:server_key]
+      @notification_url = options[:notification_url] || nil
       @sandbox_mode     = options[:sandbox] || false
       @api_version      = :v2
     end

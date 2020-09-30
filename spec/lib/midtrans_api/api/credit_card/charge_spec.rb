@@ -5,10 +5,10 @@ require 'spec_helper'
 RSpec.describe MidtransApi::Api::CreditCard::Charge do
   let(:client) do
     MidtransApi::Client.new(
-      client: 'client_key',
-      server: 'server_key',
+      client_key: 'client_key',
+      server_key: 'server_key',
       sandbox: true,
-      notification: 'someapps://callback'
+      notification_url: 'someapps://callback'
     )
   end
 
