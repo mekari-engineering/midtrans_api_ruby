@@ -142,8 +142,8 @@ RSpec.describe MidtransApi::Errors do
           'raises': MidtransApi::Errors::FraudDetectionUnavailable
         },
         '505': {
-          'title': 'PaymentReferenceUnvailable',
-          'raises': MidtransApi::Errors::PaymentReferenceUnvailable
+          'title': 'PaymentReferenceUnavailable',
+          'raises': MidtransApi::Errors::PaymentReferenceUnavailable
         }
       }
       error_code.each do |code, data|

@@ -66,7 +66,7 @@ module MidtransApi
         when '504'
           raise MidtransApi::Errors::FraudDetectionUnavailable, json_response['status_message']
         when '505'
-          raise MidtransApi::Errors::PaymentReferenceUnvailable, json_response['status_message']
+          raise MidtransApi::Errors::PaymentReferenceUnavailable, json_response['status_message']
         else
           raise MidtransApi::Errors::UnknownError, json_response['status_message']
         end

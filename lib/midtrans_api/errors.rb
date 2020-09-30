@@ -48,7 +48,7 @@ module MidtransApi
 
     class FraudDetectionUnavailable < ResponseError; end
 
-    class PaymentReferenceUnvailable < ResponseError; end
+    class PaymentReferenceUnavailable < ResponseError; end
 
     class UnknownError < ResponseError; end
   end
