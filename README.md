@@ -24,14 +24,20 @@ Or install it yourself as:
 ```ruby
 require 'midtrans_api'
 
-client = MidtransApi::Client.new(client_key: 'YOUR-CLIENT-KEY', server_key: 'YOUR-SERVER-KEY', midtrans_env: 'sandbox|production')
+midtrans = MidtransApi::Client.new(
+  client_key: 'YOUR-CLIENT-KEY',
+  server_key: 'YOUR-SERVER-KEY',
+  sandbox: true|false
+  notification_url: 'https://example.com/callback'
+)
 
 # or
 
-client = MidtransApi::Client.new do |client|
+midtrans = MidtransApi::Client.new do |client|
   client.client_key = 'YOUR-CLIENT-KEY'
   client.server_key = 'YOUR-SERVER-KEY'
-  client.midtrans_env = 'sandbox|production'
+  client.sandbox_mode = true|false
+  client.notification_url = 'https://example.com/callback'
 end
 ```
 
@@ -55,7 +61,7 @@ credit_card_token = midtrans.credit_card_token.get(credit_card_params)
 charge_params = {
   "payment_type": 'credit_card',
   "transaction_details": {
-    "order_id": 'ee5fedfc-4a4b-44f6-ab52-e7937ac0a680e',
+    "order_id": 'order-with-credit_card_installment',
     "gross_amount": 12500
   },
   "credit_card": {

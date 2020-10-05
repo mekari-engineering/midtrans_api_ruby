@@ -5,21 +5,21 @@ module MidtransApi
     attr_accessor :client_key,
                   :server_key,
                   :notification_url,
-                  :midtrans_env
+                  :sandbox_mode
     attr_reader   :api_version
 
     def initialize(options = {})
       @client_key       = options[:client_key]
       @server_key       = options[:server_key]
       @notification_url = options[:notification_url] || nil
-      @midtrans_env     = options[:midtrans_env] || 'production'
+      @sandbox_mode     = options[:sandbox] || false
       @api_version      = :v2
     end
 
     def api_url
-      return MidtransApi::API_PRODUCTION_URL if midtrans_env.eql? 'production'
+      return MidtransApi::API_SANDBOX_URL if sandbox_mode
 
-      MidtransApi::API_SANDBOX_URL
+      MidtransApi::API_PRODUCTION_URL
     end
   end
 end

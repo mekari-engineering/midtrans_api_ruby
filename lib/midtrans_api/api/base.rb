@@ -13,16 +13,6 @@ module MidtransApi
         def model_class
           Object.const_get(model_name)
         end
-
-        def allowed_methods
-          @allowed_methods ||= []
-        end
-
-        private
-
-        def allow_method(*methods)
-          @allowed_methods = methods
-        end
       end
 
       def initialize(client)

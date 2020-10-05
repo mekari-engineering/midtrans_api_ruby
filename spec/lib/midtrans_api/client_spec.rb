@@ -8,7 +8,7 @@ describe MidtransApi::Client do
       {
         client_key: 'client_key',
         server_key: 'server_key',
-        midtrans_env: 'midtrans_env',
+        sandbox: true,
         notification_url: 'notification_url'
       }
     end
@@ -19,7 +19,27 @@ describe MidtransApi::Client do
         expect(config.client_key).to        eq params[:client_key]
         expect(config.server_key).to        eq params[:server_key]
         expect(config.notification_url).to  eq params[:notification_url]
-        expect(config.midtrans_env).to      eq params[:midtrans_env]
+        expect(config.sandbox_mode).to      eq params[:sandbox]
+      end
+    end
+
+    context 'midtrans sandbox' do
+      it '#true' do
+        client = described_class.new(
+          client_key: 'client_key',
+          server_key: 'server_key',
+          sandbox: true
+        )
+        expect(client.config.api_url).to eq MidtransApi::API_SANDBOX_URL
+      end
+
+      it '#false' do
+        client = described_class.new(
+          client_key: 'client_key',
+          server_key: 'server_key',
+          sandbox: false
+        )
+        expect(client.config.api_url).to eq MidtransApi::API_PRODUCTION_URL
       end
     end
 
@@ -37,7 +57,7 @@ describe MidtransApi::Client do
           client.client_key       = params[:client_key]
           client.server_key       = params[:server_key]
           client.notification_url = params[:notification_url]
-          client.midtrans_env     = params[:midtrans_env]
+          client.sandbox_mode     = params[:sandbox]
         end
       end
 
@@ -50,7 +70,7 @@ describe MidtransApi::Client do
       MidtransApi::Client.new(
         client_key: 'client_key',
         server_key: 'server_key',
-        midtrans_env: 'midtrans_env',
+        sandbox: true,
         notification_url: 'someapps://callback'
       )
     end

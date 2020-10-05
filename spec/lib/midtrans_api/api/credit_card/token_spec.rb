@@ -4,7 +4,11 @@ require 'spec_helper'
 
 RSpec.describe MidtransApi::Api::CreditCard::Token do
   let(:client) do
-    MidtransApi::Client.new(client_key: 'client_key', server_key: 'server_key', midtrans_env: 'midtrans_env')
+    MidtransApi::Client.new(
+      client_key: 'client_key',
+      server_key: 'server_key',
+      sandbox: true
+    )
   end
 
   describe '#get' do
