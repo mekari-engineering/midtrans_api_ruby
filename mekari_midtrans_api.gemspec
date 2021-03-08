@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'midtrans_api/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'mekari_midtrans_api'
+  spec.name          = 'mekari-midtrans-api'
   spec.version       = MidtransApi::Version::VERSION
   spec.authors       = ['Fadli Zul Fahmi']
   spec.email         = ['fadli.fahmi@mekari.com']
