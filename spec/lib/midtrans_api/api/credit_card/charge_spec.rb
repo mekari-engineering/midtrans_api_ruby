@@ -89,6 +89,7 @@ RSpec.describe MidtransApi::Api::CreditCard::Charge do
         expect(response.gross_amount).to eq '12500.00'
         expect(response.transaction_status).to eq 'pending'
         expect(response.redirect_url).to be_truthy
+        expect(response.payload).to eq dummy_response.to_json
       end
     end
 
