@@ -23,7 +23,8 @@ module MidtransApi
                             :redirect_url,
                             :masked_card,
                             :card_type,
-                            :installment_term
+                            :installment_term,
+                            :payload
 
         def resolve_params_attr(attr)
           attr.to_s
