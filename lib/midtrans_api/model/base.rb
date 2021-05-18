@@ -20,6 +20,10 @@ module MidtransApi
         assign_attributes(params)
       end
 
+      def instance_values
+        Hash[instance_variables.map { |name| [name[1..-1], instance_variable_get(name)] }]
+      end
+
       private
 
       def assign_attributes(params)
