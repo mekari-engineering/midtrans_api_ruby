@@ -24,7 +24,9 @@ module MidtransApi
                             :masked_card,
                             :card_type,
                             :installment_term,
-                            :payload
+                            :payload,
+                            :saved_token_id,
+                            :saved_token_id_expired_at
 
         def resolve_params_attr(attr)
           attr.to_s
