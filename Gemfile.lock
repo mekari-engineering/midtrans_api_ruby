@@ -57,7 +57,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bundler (~> 1.10)
+  bundler (~> 2.2.17)
   mekari-midtrans-api!
   pry
   rake (~> 10.0)
@@ -65,4 +65,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   1.17.3
+   2.2.17
