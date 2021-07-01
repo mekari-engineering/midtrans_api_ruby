@@ -1,9 +1,8 @@
 # frozen_string_literal: true
-
 module MidtransApi
   module Middleware
     class HandleResponseException < Faraday::Middleware
-      VALID_STATUSES = %w[200 201 407].freeze
+      VALID_STATUSES = %w[200 201 202 407].freeze
 
       def initialize(app)
         super(app)
@@ -20,11 +19,10 @@ module MidtransApi
       # rubocop:disable Metrics/CyclomaticComplexity
       def validate_response(response)
         json_response = JSON.parse(response)
+
         return true if VALID_STATUSES.include?(json_response['status_code'])
 
         case json_response['status_code']
-        when '202'
-          raise MidtransApi::Errors::PaymentDenied, json_response['status_message']
         when '300'
           raise MidtransApi::Errors::MovePermanently, json_response['status_message']
         when '400'

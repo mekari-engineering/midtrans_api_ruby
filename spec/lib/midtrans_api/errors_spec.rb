@@ -30,17 +30,6 @@ RSpec.describe MidtransApi::Errors do
       end
     end
 
-    context 'status code 2xx' do
-      it 'PaymentDenied' do
-        dummy_response[:status_code] = '202'
-        stub_request(:get, "#{client.config.api_url}/#{client.config.api_version}/test")
-          .to_return(status: 200, body: dummy_response.to_json)
-        expect do
-          client.get("#{client.config.api_url}/#{client.config.api_version}/test", {})
-        end.to raise_error(MidtransApi::Errors::PaymentDenied, 'This is dummy status message of error code.')
-      end
-    end
-
     context 'status code 3xx' do
       it 'MovePermanently' do
         dummy_response[:status_code] = '300'
