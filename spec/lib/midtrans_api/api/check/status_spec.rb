@@ -28,6 +28,28 @@ describe MidtransApi::Api::Check::Status do
     }
   end
 
+  let(:dummy_response_202) do
+    {
+      "masked_card": '471111-1115',
+      "bank": 'cimb',
+      "channel_response_code": '05',
+      "channel_response_message": 'Do not honour',
+      "transaction_time": '2021-06-30 18:07:31',
+      "gross_amount": '500000.00',
+      "currency": 'IDR',
+      "order_id": 'a0cabb9b-b8f5-4f08-a66a-c52ed55c50ac',
+      "payment_type": 'credit_card',
+      "signature_key": '9b0802af53517e395935969084e1d40f29068bfe1ab03d4c693b8022c0074a7c85deafdc41223328721eb476d47680050fcc1d4c556434fbd89e34d9a12fbae7',
+      "status_code": '202',
+      "transaction_id": '6011bfc5-aeef-4268-a0d3-3e14161729cf',
+      "transaction_status": 'deny',
+      "fraud_status": 'accept',
+      "status_message": 'Success, transaction is found',
+      "merchant_id": 'M045108',
+      "card_type": 'credit'
+    }
+  end
+
   let(:dummy_response_error) do
     {
       "status_code": '404',
@@ -38,12 +60,11 @@ describe MidtransApi::Api::Check::Status do
 
   describe '#get' do
     context 'when payment is exist' do
-      dummy_order_id = 'order-id-founded'
-      before do
-        stub_request(:get, "#{client.config.api_url}/#{client.config.api_version}/#{dummy_order_id}/status")
-          .to_return(status: 200, body: dummy_response.to_json)
-      end
       it 'using described class returns expected response' do
+        dummy_order_id = 'order-id-founded'
+        stub_request(:get, "#{client.config.api_url}/#{client.config.api_version}/#{dummy_order_id}/status").to_return(
+          status: 200, body: dummy_response.to_json
+        )
         status_api = described_class.new(client)
         response = status_api.get(order_id: dummy_order_id)
         expect(response).to be_instance_of MidtransApi::Model::Check::Status
@@ -51,6 +72,20 @@ describe MidtransApi::Api::Check::Status do
         expect(response.gross_amount).to eq '800000.00'
         expect(response.status_message).to eq 'Success, transaction is found'
         expect(response.payment_type).to eq 'gopay'
+      end
+
+      it 'returns expected response when status code is 202' do
+        dummy_order_id = 'a0cabb9b-b8f5-4f08-a66a-c52ed55c50ac'
+        stub_request(:get, "#{client.config.api_url}/#{client.config.api_version}/#{dummy_order_id}/status").to_return(
+          status: 200, body: dummy_response_202.to_json
+        )
+        status_api = described_class.new(client)
+        response = status_api.get(order_id: 'a0cabb9b-b8f5-4f08-a66a-c52ed55c50ac')
+        expect(response).to be_instance_of MidtransApi::Model::Check::Status
+        expect(response.transaction_time).to be_truthy
+        expect(response.gross_amount).to eq '500000.00'
+        expect(response.status_message).to eq 'Success, transaction is found'
+        expect(response.payment_type).to eq 'credit_card'
       end
     end
 
@@ -60,6 +95,7 @@ describe MidtransApi::Api::Check::Status do
         stub_request(:get, "#{client.config.api_url}/#{client.config.api_version}/#{dummy_order_id}/status")
           .to_return(status: 200, body: dummy_response_error.to_json)
       end
+
       it 'returns error response' do
         expect do
           status_api = described_class.new(client)

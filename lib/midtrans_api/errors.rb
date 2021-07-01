@@ -4,8 +4,6 @@ module MidtransApi
   class Errors
     class ResponseError < StandardError; end
 
-    class PaymentDenied < ResponseError; end
-
     class MovePermanently < ResponseError; end
 
     class ValidationError < ResponseError; end
