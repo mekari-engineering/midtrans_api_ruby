@@ -38,6 +38,20 @@ module MidtransApi
 
         connection.use MidtransApi::Middleware::HandleResponseException
         connection.adapter Faraday.default_adapter
+
+        if logger
+          connection.response :logger, logger, { headers: false, bodies: true } do |log|
+            filtered_logs = options[:filtered_logs]
+            if filtered_logs.respond_to?(:each)
+              filtered_logs.each do |filter|
+                # filter when data type was string
+                log.filter(/(#{filter}":")(\w+)/, '\1[FILTERED]')
+                # filter when data type wasnt string (maybe number, boolean, etc)
+                log.filter(/(#{filter}":)(\w+)/, '\1[FILTERED]')
+              end
+            end
+          end
+        end
       end
     end
 
@@ -65,6 +79,12 @@ module MidtransApi
     def post(url, params)
       response = @connection.post(url, params)
       response.body
+    end
+
+    private
+
+    def logger
+      MidtransApi.configuration&.logger
     end
   end
 end

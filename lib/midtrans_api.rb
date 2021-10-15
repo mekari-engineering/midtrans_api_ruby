@@ -3,6 +3,15 @@
 module MidtransApi
   API_PRODUCTION_URL = 'https://api.midtrans.com'
   API_SANDBOX_URL = 'https://api.sandbox.midtrans.com'
+
+  class << self
+    attr_accessor :configuration
+  end
+
+  def self.configure
+    self.configuration ||= MidtransApi::Configure.new
+    yield(configuration)
+  end
 end
 
 require 'midtrans_api/errors'
