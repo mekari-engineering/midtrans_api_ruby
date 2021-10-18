@@ -45,9 +45,9 @@ module MidtransApi
             if filtered_logs.respond_to?(:each)
               filtered_logs.each do |filter|
                 log.filter(/(#{filter}=)(#{URI::DEFAULT_PARSER.make_regexp})/, '\1[FILTERED]')
-                log.filter(/(#{filter}=)([\w-]+)/, '\1[FILTERED]')
-                log.filter(/(#{filter}":")([\w-]+)/, '\1[FILTERED]')
-                log.filter(/(#{filter}":)([\w-]+)/, '\1[FILTERED]')
+                log.filter(/(#{filter}=)([\w-+]+)/, '\1[FILTERED]')
+                log.filter(/(#{filter}":")([\w-+]+)/, '\1[FILTERED]')
+                log.filter(/(#{filter}":)([\w-+]+)/, '\1[FILTERED]')
               end
             end
           end
