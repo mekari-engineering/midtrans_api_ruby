@@ -44,9 +44,9 @@ module MidtransApi
             filtered_logs = options[:filtered_logs]
             if filtered_logs.respond_to?(:each)
               filtered_logs.each do |filter|
-                log.filter(%r{(#{filter}=)([\w+-.?\/]+)}, '\1[FILTERED]')
-                log.filter(%r{(#{filter}":")([\w+-.?\/]+)}, '\1[FILTERED]')
-                log.filter(%r{(#{filter}":)([\w+-.?\/]+)}, '\1[FILTERED]')
+                log.filter(%r{(#{filter}=)([\w+-.?:/]+)}, '\1[FILTERED]')
+                log.filter(%r{(#{filter}":")([\w+-.?:/]+)}, '\1[FILTERED]')
+                log.filter(%r{(#{filter}":)([\w+-.?:/]+)}, '\1[FILTERED]')
               end
             end
           end
