@@ -27,7 +27,7 @@ module MidtransApi
       yield @config if block_given?
 
       @connection = Faraday.new(url: "#{@config.api_url}/#{@config.api_version}/") do |connection|
-        connection.basic_auth(@config.server_key, '')
+        connection.request :basic_auth, @config.server_key, ''
 
         unless @config.notification_url.nil?
           connection.headers['X-Override-Notification'] = @config.notification_url
