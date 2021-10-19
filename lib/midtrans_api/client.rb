@@ -27,7 +27,7 @@ module MidtransApi
       yield @config if block_given?
 
       @connection = Faraday.new(url: "#{@config.api_url}/#{@config.api_version}/") do |connection|
-        connection.basic_auth(@config.server_key, '')
+        connection.request :basic_auth, @config.server_key, ''
 
         unless @config.notification_url.nil?
           connection.headers['X-Override-Notification'] = @config.notification_url
@@ -38,6 +38,20 @@ module MidtransApi
 
         connection.use MidtransApi::Middleware::HandleResponseException
         connection.adapter Faraday.default_adapter
+
+        logger = find_logger(options[:logger])
+        if logger
+          connection.response :logger, logger, { headers: false, bodies: true } do |log|
+            filtered_logs = options[:filtered_logs]
+            if filtered_logs.respond_to?(:each)
+              filtered_logs.each do |filter|
+                log.filter(%r{(#{filter}=)([\w+-.?@:/]+)}, '\1[FILTERED]')
+                log.filter(%r{(#{filter}":")([\w+-.?@:/]+)}, '\1[FILTERED]')
+                log.filter(%r{(#{filter}":)([\w+-.?@:/]+)}, '\1[FILTERED]')
+              end
+            end
+          end
+        end
       end
     end
 
@@ -65,6 +79,12 @@ module MidtransApi
     def post(url, params)
       response = @connection.post(url, params)
       response.body
+    end
+
+    private
+
+    def find_logger(logger_options)
+      logger_options || MidtransApi.configuration&.logger
     end
   end
 end

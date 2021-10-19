@@ -5,7 +5,8 @@ module MidtransApi
     attr_accessor :client_key,
                   :server_key,
                   :notification_url,
-                  :sandbox_mode
+                  :sandbox_mode,
+                  :logger
     attr_reader   :api_version
 
     def initialize(options = {})
