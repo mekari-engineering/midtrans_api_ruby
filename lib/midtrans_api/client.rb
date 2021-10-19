@@ -39,6 +39,7 @@ module MidtransApi
         connection.use MidtransApi::Middleware::HandleResponseException
         connection.adapter Faraday.default_adapter
 
+        logger = find_logger(options[:logger])
         if logger
           connection.response :logger, logger, { headers: false, bodies: true } do |log|
             filtered_logs = options[:filtered_logs]
@@ -82,8 +83,8 @@ module MidtransApi
 
     private
 
-    def logger
-      MidtransApi.configuration&.logger
+    def find_logger(logger_options)
+      logger_options || MidtransApi.configuration&.logger
     end
   end
 end
