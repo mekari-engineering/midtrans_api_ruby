@@ -5,6 +5,7 @@ require 'faraday_middleware'
 
 require 'midtrans_api/api/base'
 require 'midtrans_api/api/check/status'
+require 'midtrans_api/api/bca_virtual_account/charge'
 require 'midtrans_api/api/credit_card/charge'
 require 'midtrans_api/api/credit_card/token'
 require 'midtrans_api/api/gopay/charge'
@@ -13,6 +14,7 @@ require 'midtrans_api/middleware/handle_response_exception'
 
 require 'midtrans_api/model/base'
 require 'midtrans_api/model/check/status'
+require 'midtrans_api/model/bca_virtual_account/charge'
 require 'midtrans_api/model/credit_card/charge'
 require 'midtrans_api/model/credit_card/token'
 require 'midtrans_api/model/gopay/charge'
@@ -53,6 +55,10 @@ module MidtransApi
           end
         end
       end
+    end
+
+    def bca_virtual_account_charge
+      @charge ||= MidtransApi::Api::BcaVirtualAccount::Charge.new(self)
     end
 
     def gopay_charge

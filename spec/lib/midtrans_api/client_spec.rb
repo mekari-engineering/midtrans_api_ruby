@@ -102,6 +102,71 @@ describe MidtransApi::Client do
       }
     end
 
+    describe '#bca_virtual_account_charge' do
+      it do
+        expect(client.bca_virtual_account_charge).to be_instance_of MidtransApi::Api::BcaVirtualAccount::Charge
+      end
+
+      it do
+        dummy_params = {
+          "payment_type": 'bank_transfer',
+          "transaction_details": dummy_transaction_details,
+          "item_details": dummy_item_details,
+          "customer_details": dummy_customer_details,
+          "bank_transfer": {
+            "bank": 'bca',
+            "va_number": '111111',
+            "free_text": {
+              "inquiry": [
+                {
+                  "id": 'Free Text ID',
+                  "en": 'Free Text EN'
+                }
+              ],
+              "payment": [
+                {
+                  "id": 'Free Text ID',
+                  "en": 'Free Text EN'
+                }
+              ]
+            }
+          },
+          "bca": {
+            "sub_company_code": '0000'
+          }
+        }
+
+        dummy_response = {
+          "status_code": '201',
+          "status_message": 'Success, Bank Transfer transaction is created',
+          "transaction_id": 'redacted-transaction-id',
+          "order_id": 'order-with-bca-virtual-account',
+          "merchant_id": 'redacted-merchant-id',
+          "gross_amount": '12500.00',
+          "payment_type": 'bank_transfer',
+          "transaction_time": '2020-09-24 14:36:02',
+          "transaction_status": 'pending',
+          "va_numbers": [
+            {
+              "bank": 'bca',
+              "va_number": '12345678900'
+            }
+          ],
+          "fraud_status": 'accept',
+          "currency": 'IDR'
+        }
+        stub_request(:post, "#{client.config.api_url}/#{client.config.api_version}/charge")
+          .with(body: dummy_params)
+          .to_return(status: 200, body: dummy_response.to_json)
+        response = client.bca_virtual_account_charge.post(dummy_params)
+        expect(response).to be_instance_of MidtransApi::Model::BcaVirtualAccount::Charge
+        expect(response.transaction_time).to be_truthy
+        expect(response.status_code).to eq '201'
+        expect(response.gross_amount).to eq '12500.00'
+        expect(response.va_numbers).to be_truthy
+      end
+    end
+
     describe '#gopay_charge' do
       it do
         expect(client.gopay_charge).to be_instance_of MidtransApi::Api::Gopay::Charge
