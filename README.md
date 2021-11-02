@@ -125,6 +125,55 @@ gopay_charge = midtrans.gopay_charge.post(charge_params)
 #=> gopay_charge returns MidtransApiMidtransApi::Model::Gopay::Charge instance
 ```
 
+#### BCA Virtual Account Charge
+```ruby
+charge_params = {
+  "payment_type": "bank_transfer",
+  "transaction_details": {
+      "order_id": "order-with-bca-virtua-account",
+      "gross_amount": 12500
+  },
+  "item_details": [
+      {
+          "id": "bluedio-turbine",
+          "price": 12500,
+          "quantity": 1,
+          "name": "Bluedio H+ Turbine Headphone with Bluetooth 4.1 -"
+      }
+  ],
+  "customer_details": {
+      "first_name": "Budi",
+      "last_name": "Utomo",
+      "email": "budi.utomo@midtrans.com",
+      "phone": "081223323423"
+  },
+  "bank_transfer": {
+    "bank": "bca",
+    "va_number": "11111111",
+    "free_text": {
+      "inquiry": [
+        {
+          "id": "Free Text Inquiry ID",
+          "en": "Free Text Inquiry EN"
+        }
+      ],
+      "payment": [
+        {
+          "id": "Free Text Payment ID",
+          "en": "Free Text Payment EN"
+        }
+      ]
+    }
+  },
+  "bca": {
+      "sub_company_code": "000"
+    }
+}
+
+bca_virtual_account_charge = midtrans.bca_virtual_account_charge.post(charge_params)
+#=> bca_virtual_account_charge returns MidtransApiMidtransApi::Model::BcaVirtualAccount::Charge instance
+```
+
 #### Check Status Payment
 ```ruby
 dummy_order_id = "order-with-gopay"
