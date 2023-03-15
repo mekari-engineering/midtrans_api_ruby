@@ -9,6 +9,7 @@ require 'midtrans_api/api/bca_virtual_account/charge'
 require 'midtrans_api/api/credit_card/charge'
 require 'midtrans_api/api/credit_card/token'
 require 'midtrans_api/api/gopay/charge'
+require 'midtrans_api/api/transaction/expire'
 
 require 'midtrans_api/middleware/handle_response_exception'
 
@@ -18,6 +19,7 @@ require 'midtrans_api/model/bca_virtual_account/charge'
 require 'midtrans_api/model/credit_card/charge'
 require 'midtrans_api/model/credit_card/token'
 require 'midtrans_api/model/gopay/charge'
+require 'midtrans_api/model/transaction/expire'
 
 module MidtransApi
   class Client
@@ -59,6 +61,10 @@ module MidtransApi
 
     def bca_virtual_account_charge
       @charge ||= MidtransApi::Api::BcaVirtualAccount::Charge.new(self)
+    end
+
+    def expire_transaction
+      @expire ||= MidtransApi::Api::Transaction::Expire.new(self)
     end
 
     def gopay_charge
