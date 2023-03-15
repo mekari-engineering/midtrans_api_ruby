@@ -174,6 +174,13 @@ bca_virtual_account_charge = midtrans.bca_virtual_account_charge.post(charge_par
 #=> bca_virtual_account_charge returns MidtransApiMidtransApi::Model::BcaVirtualAccount::Charge instance
 ```
 
+#### Expire Transaction
+```ruby
+expire_response = midtrans.expire_transaction.post(order_id: "eb046679-285a-4136-8977-e4c429cc3254")
+#=> expire_response returns MidtransApiMidtransApi::Model::Transaction::Expire instance
+```
+
+
 #### Check Status Payment
 ```ruby
 dummy_order_id = "order-with-gopay"
