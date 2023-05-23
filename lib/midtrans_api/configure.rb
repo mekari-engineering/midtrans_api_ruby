@@ -6,7 +6,8 @@ module MidtransApi
                   :server_key,
                   :notification_url,
                   :sandbox_mode,
-                  :logger
+                  :logger,
+                  :timeout
     attr_reader   :api_version
 
     def initialize(options = {})
@@ -14,6 +15,7 @@ module MidtransApi
       @server_key       = options[:server_key]
       @notification_url = options[:notification_url] || nil
       @sandbox_mode     = options[:sandbox] || false
+      @timeout          = options[:timeout] || 60
       @api_version      = :v2
     end
 

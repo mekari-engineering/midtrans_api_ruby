@@ -40,6 +40,7 @@ describe MidtransApi::Client do
           sandbox: false
         )
         expect(client.config.api_url).to eq MidtransApi::API_PRODUCTION_URL
+        expect(client.config.timeout).to eql(60)
       end
     end
 
@@ -62,6 +63,20 @@ describe MidtransApi::Client do
       end
 
       it_behaves_like 'set given params'
+    end
+
+    context 'when pass timeout' do
+      params = {
+        client_key: 'client_key',
+        server_key: 'server_key',
+        sandbox: true,
+        timeout: 2
+      }
+
+      it 'have timeout' do
+        client = MidtransApi::Client.new(params)
+        expect(client.config.timeout).to eq 2
+      end
     end
   end
 
