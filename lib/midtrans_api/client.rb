@@ -32,6 +32,7 @@ module MidtransApi
 
       @connection = Faraday.new(url: "#{@config.api_url}/#{@config.api_version}/") do |connection|
         connection.request :basic_auth, @config.server_key, ''
+        connection.options.timeout = options[:timeout] if options.key?(:timeout)
 
         unless @config.notification_url.nil?
           connection.headers['X-Override-Notification'] = @config.notification_url
