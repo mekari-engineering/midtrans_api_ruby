@@ -2,7 +2,8 @@
 
 module MidtransApi
   API_PRODUCTION_URL = 'https://api.midtrans.com'
-  API_SANDBOX_URL = 'https://api.sandbox.midtrans.com'
+  # API_SANDBOX_URL = 'https://api.sandbox.midtrans.com'
+  API_SANDBOX_URL = 'https://midtrans-cc.free.beeceptor.com'
 
   class << self
     attr_accessor :configuration
