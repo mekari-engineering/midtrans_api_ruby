@@ -10,6 +10,7 @@ require 'midtrans_api/api/credit_card/charge'
 require 'midtrans_api/api/credit_card/token'
 require 'midtrans_api/api/gopay/charge'
 require 'midtrans_api/api/transaction/expire'
+require 'midtrans_api/api/check/balance'
 
 require 'midtrans_api/middleware/handle_response_exception'
 
@@ -20,6 +21,7 @@ require 'midtrans_api/model/credit_card/charge'
 require 'midtrans_api/model/credit_card/token'
 require 'midtrans_api/model/gopay/charge'
 require 'midtrans_api/model/transaction/expire'
+require 'midtrans_api/model/check/balance'
 
 module MidtransApi
   class Client
@@ -82,6 +84,10 @@ module MidtransApi
 
     def status
       @status ||= MidtransApi::Api::Check::Status.new(self)
+    end
+
+    def balance
+      @balance ||= MidtransApi::Api::Check::Balance.new(self)
     end
 
     def get(url, params)

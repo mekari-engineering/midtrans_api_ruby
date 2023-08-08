@@ -20,6 +20,7 @@ module MidtransApi
       def validate_response(response)
         json_response = JSON.parse(response)
 
+        return true if json_response['status_code'].nil?
         return true if VALID_STATUSES.include?(json_response['status_code'])
 
         case json_response['status_code']
