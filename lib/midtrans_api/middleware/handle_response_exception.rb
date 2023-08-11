@@ -10,7 +10,7 @@ module MidtransApi
 
       def call(env)
         @app.call(env).on_complete do |response|
-          validate_response(response.body)
+          validate_response(response)
         end
       end
 
@@ -18,12 +18,12 @@ module MidtransApi
 
       # rubocop:disable Metrics/CyclomaticComplexity
       def validate_response(response)
-        json_response = JSON.parse(response)
+        json_response = JSON.parse(response.body)
+        status_code_response = response.status.to_s
 
-        return true if json_response['status_code'].nil?
-        return true if VALID_STATUSES.include?(json_response['status_code'])
+        return true if VALID_STATUSES.include?(status_code_response)
 
-        case json_response['status_code']
+        case status_code_response
         when '300'
           raise MidtransApi::Errors::MovePermanently, json_response['status_message']
         when '400'

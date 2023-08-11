@@ -75,7 +75,7 @@ RSpec.describe MidtransApi::Api::CreditCard::Token do
       it 'raise invalid parameters card number' do
         stub_request(:get, "#{client.config.api_url}/#{client.config.api_version}/token")
           .with(query: params)
-          .to_return(status: 200, body: dummy_response.to_json)
+          .to_return(status: 400, body: dummy_response.to_json)
         expect do
           charge_api = described_class.new(client)
           charge_api.get(params)
@@ -90,7 +90,7 @@ RSpec.describe MidtransApi::Api::CreditCard::Token do
         }
         stub_request(:get, "#{client.config.api_url}/#{client.config.api_version}/token")
           .with(query: params)
-          .to_return(status: 200, body: dummy_response.to_json)
+          .to_return(status: 401, body: dummy_response.to_json)
         expect do
           charge_api = described_class.new(client)
           charge_api.get(params)
