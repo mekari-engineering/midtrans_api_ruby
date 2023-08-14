@@ -16,7 +16,7 @@ module MidtransApi
       @notification_url = options[:notification_url] || nil
       @sandbox_mode     = options[:sandbox] || false
       @timeout          = options[:timeout] || 60
-      @api_version      = :v2
+      @api_version      = options[:api_version] || :v2
     end
 
     def api_url

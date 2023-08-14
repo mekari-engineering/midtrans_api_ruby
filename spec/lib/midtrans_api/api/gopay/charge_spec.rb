@@ -116,7 +116,7 @@ RSpec.describe MidtransApi::Api::Gopay::Charge do
         }
         stub_request(:post, "#{client.config.api_url}/#{client.config.api_version}/charge")
           .with(body: dummy_params)
-          .to_return(status: 200, body: dummy_response.to_json)
+          .to_return(status: 400, body: dummy_response.to_json)
         expect do
           charge_api = described_class.new(client)
           charge_api.post(dummy_params)
@@ -131,7 +131,7 @@ RSpec.describe MidtransApi::Api::Gopay::Charge do
         }
         stub_request(:post, "#{client.config.api_url}/#{client.config.api_version}/charge")
           .with(body: dummy_params)
-          .to_return(status: 200, body: dummy_response.to_json)
+          .to_return(status: 406, body: dummy_response.to_json)
         expect do
           charge_api = described_class.new(client)
           charge_api.post(dummy_params)

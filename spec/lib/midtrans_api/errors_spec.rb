@@ -23,7 +23,7 @@ RSpec.describe MidtransApi::Errors do
     context 'status code xxx' do
       it 'UnknownError' do
         stub_request(:get, "#{client.config.api_url}/#{client.config.api_version}/test")
-          .to_return(status: 200, body: dummy_response.to_json)
+          .to_return(status: 999, body: dummy_response.to_json)
         expect do
           client.get("#{client.config.api_url}/#{client.config.api_version}/test", {})
         end.to raise_error(MidtransApi::Errors::UnknownError, 'This is dummy status message of error code.')
@@ -34,7 +34,7 @@ RSpec.describe MidtransApi::Errors do
       it 'MovePermanently' do
         dummy_response[:status_code] = '300'
         stub_request(:get, "#{client.config.api_url}/#{client.config.api_version}/test")
-          .to_return(status: 200, body: dummy_response.to_json)
+          .to_return(status: 300, body: dummy_response.to_json)
         expect do
           client.get("#{client.config.api_url}/#{client.config.api_version}/test", {})
         end.to raise_error(MidtransApi::Errors::MovePermanently, 'This is dummy status message of error code.')
@@ -100,7 +100,7 @@ RSpec.describe MidtransApi::Errors do
         it data[:title] do
           dummy_response[:status_code] = code
           stub_request(:get, "#{client.config.api_url}/#{client.config.api_version}/test")
-            .to_return(status: 200, body: dummy_response.to_json)
+            .to_return(status: code.to_s.to_i, body: dummy_response.to_json)
           expect do
             client.get("#{client.config.api_url}/#{client.config.api_version}/test", {})
           end.to raise_error(data[:raises], 'This is dummy status message of error code.')
@@ -139,7 +139,7 @@ RSpec.describe MidtransApi::Errors do
         it data[:title] do
           dummy_response[:status_code] = code
           stub_request(:get, "#{client.config.api_url}/#{client.config.api_version}/test")
-            .to_return(status: 200, body: dummy_response.to_json)
+            .to_return(status: code.to_s.to_i, body: dummy_response.to_json)
           expect do
             client.get("#{client.config.api_url}/#{client.config.api_version}/test", {})
           end.to raise_error(data[:raises], 'This is dummy status message of error code.')

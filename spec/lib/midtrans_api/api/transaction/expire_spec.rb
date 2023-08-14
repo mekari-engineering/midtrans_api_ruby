@@ -51,7 +51,7 @@ RSpec.describe MidtransApi::Api::Transaction::Expire do
         dummy_order_id = "eb046679-28512312323254"
         stub_request(:post, "#{client.config.api_url}/#{client.config.api_version}/#{dummy_order_id}/expire")
           .with(body: {})
-          .to_return(status: 200, body: dummy_response.to_json)
+          .to_return(status: 404, body: dummy_response.to_json)
         expect do
           expire_api = described_class.new(client)
           expire_api.post(order_id: dummy_order_id)
@@ -67,7 +67,7 @@ RSpec.describe MidtransApi::Api::Transaction::Expire do
         dummy_order_id = "2d44562e-6cb6-44f5-8cbd-751acb6e9cd2"
         stub_request(:post, "#{client.config.api_url}/#{client.config.api_version}/#{dummy_order_id}/expire")
           .with(body: {})
-          .to_return(status: 200, body: dummy_response.to_json)
+          .to_return(status: 412, body: dummy_response.to_json)
         expect do
           expire_api = described_class.new(client)
           expire_api.post(order_id: dummy_order_id)

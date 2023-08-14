@@ -93,7 +93,7 @@ describe MidtransApi::Api::Check::Status do
       dummy_order_id = 'not-found-order-id'
       before do
         stub_request(:get, "#{client.config.api_url}/#{client.config.api_version}/#{dummy_order_id}/status")
-          .to_return(status: 200, body: dummy_response_error.to_json)
+          .to_return(status: 404, body: dummy_response_error.to_json)
       end
 
       it 'returns error response' do
