@@ -19,7 +19,7 @@ module MidtransApi
       # rubocop:disable Metrics/CyclomaticComplexity
       def validate_response(response)
         json_response = JSON.parse(response.body)
-        status_code_response = response.status.to_s
+        status_code_response = json_response['status_code'].nil? ? response.status.to_s : json_response['status_code']
 
         return true if VALID_STATUSES.include?(status_code_response)
 
