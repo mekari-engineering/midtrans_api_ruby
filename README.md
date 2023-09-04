@@ -182,7 +182,21 @@ expire_response = midtrans.expire_transaction.post(order_id: "eb046679-285a-4136
 ```
 
 #### Charge Transaction
-Charge transaction for payment type **bank_transfer**
+Charge Transaction Payment Method: **Bank Transfer**
+_Bank Transfer_ is one of the payment methods offered by Midtrans. By using this method, your customers can make a payment via bank transfer and Midtrans will send real time notification when the payment is completed.
+
+A list of bank transfer payment methods supported by Midtrans is given below.
+
+- Permata Virtual Account
+- BCA Virtual Account (Please refer to BCA Virtual Account Charge section)
+- Mandiri Bill Payment
+- BNI Virtual Account
+- BRI Virtual Account
+- CIMB Virtual Account
+
+Note: Mandiri Bill Payment has different request payload, please refer to Charge transaction for payment type echannel section.
+
+##### Charge transaction for payment type bank_transfer
 Available for these bank:
 - permata
 - bni
@@ -229,6 +243,48 @@ charge_params = {
 
 charge_response = midtrans.charge_transaction.post(charge_params)
 #=> charge_response returns MidtransApiMidtransApi::Model::Transaction::Charge instance
+```
+
+##### Charge Transaction for payment_type echannel
+```ruby
+# "payment_type" => required
+# "transaction_details" => required
+# "customer_details" => optional
+# "item_details" => optional
+# "echannel" => required
+#     "bill_info1" => required (label 1) | allows only 10 char, if exceed will be truncated
+#     "bill_info2" => required (value for label 1) | allows only 30 char, if exceed will be truncated
+#     "bill_info3" => optional
+#     "bill_key" => optional
+# note: "bill_info<number>" is available untill "bill_info8"
+charge_echannel_params = {
+    "payment_type": "echannel",
+    "transaction_details": {
+        "order_id": "1388",
+        "gross_amount": 95000
+        },
+    "item_details": [
+        {
+          "id": "a1",
+          "price": 50000,
+          "quantity": 2,
+          "name": "Apel"
+        },
+        {
+         "id": "a2",
+          "price": 45000,
+          "quantity": 1,
+          "name": "Jeruk"
+        }
+    ],
+    "echannel" : {
+        "bill_info1" : "Payment For:",
+        "bill_info2" : "debt",
+        "bill_key" : "081211111111"
+    }
+}
+charge_response = midtrans.charge_echannel_transaction.post(charge_echannel_params)
+#=> charge_response returns MidtransApiMidtransApi::Model::Transaction::ChargeEchannel instance
 ```
 
 #### Check Status Payment
