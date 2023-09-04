@@ -52,6 +52,48 @@ RSpec.describe MidtransApi::Api::Transaction::Charge do
     }
   end
 
+  let(:dummy_params_bni) do
+    {
+      "payment_type": 'bank_transfer',
+      "transaction_details": {
+        "order_id": 'generated_by_you',
+        "gross_amount": 20_000
+      },
+      "bank_transfer": {
+        "bank": 'bni',
+        "va_number": '111111'
+      }
+    }
+  end
+
+  let(:dummy_params_bri) do
+    {
+      "payment_type": 'bank_transfer',
+      "transaction_details": {
+        "order_id": 'generated_by_you',
+        "gross_amount": 20_000
+      },
+      "bank_transfer": {
+        "bank": 'bri',
+        "va_number": '111111'
+      }
+    }
+  end
+
+  let(:dummy_params_cimb) do
+    {
+      "payment_type": 'bank_transfer',
+      "transaction_details": {
+        "order_id": 'generated_by_you',
+        "gross_amount": 20_000
+      },
+      "bank_transfer": {
+        "bank": 'cimb',
+        "va_number": '111111'
+      }
+    }
+  end
+
   describe '#post' do
     context 'with valid params' do
       dummy_response_permata = {
@@ -68,7 +110,65 @@ RSpec.describe MidtransApi::Api::Transaction::Charge do
         "expiry_time": "2017-01-09 09:56:44"
       }
 
-      it 'using described class returns success response' do
+      dummy_response_bni = {
+        "status_code": "201",
+        "status_message": "Success, Bank Transfer transaction is created",
+        "transaction_id": "9aed5972-5b6a-401e-894b-a32c91ed1a3a",
+        "order_id": "1466323342",
+        "gross_amount": "20000.00",
+        "payment_type": "bank_transfer",
+        "transaction_time": "2016-06-19 15:02:22",
+        "transaction_status": "pending",
+        "va_numbers": [
+          {
+            "bank": "bni",
+            "va_number": "8578000000111111"
+          }
+        ],
+        "fraud_status": "accept",
+        "currency": "IDR"
+      }
+
+      dummy_response_bri = {
+        "status_code": "201",
+        "status_message": "Success, Bank Transfer transaction is created",
+        "transaction_id": "9aed5972-5b6a-401e-894b-a32c91ed1a3a",
+        "order_id": "1466323342",
+        "gross_amount": "20000.00",
+        "payment_type": "bank_transfer",
+        "transaction_time": "2016-06-19 15:02:22",
+        "transaction_status": "pending",
+        "va_numbers": [
+          {
+            "bank": "bri",
+            "va_number": "8578000000111111"
+          }
+        ],
+        "fraud_status": "accept",
+        "currency": "IDR"
+      }
+
+      dummy_response_cimb = {
+        "status_code": "201",
+        "status_message": "Success, Bank Transfer transaction is created",
+        "transaction_id": "9aed5972-5b6a-401e-894b-a32c91ed1a3a",
+        "order_id": "1466323342",
+        "gross_amount": "20000.00",
+        "payment_type": "bank_transfer",
+        "transaction_time": "2016-06-19 15:02:22",
+        "transaction_status": "pending",
+        "va_numbers": [
+          {
+            "bank": "cimb",
+            "va_number": "8578000000111111"
+          }
+        ],
+        "fraud_status": "accept",
+        "currency": "IDR",
+        "expiry_time": "2023-06-29 15:15:58"
+      }
+
+      it 'returns success response permata virtual account' do
         stub_request(:post, "#{client.config.api_url}/#{client.config.api_version}/charge")
           .with(body: dummy_params_permata)
           .to_return(status: 200, body: dummy_response_permata.to_json)
@@ -80,6 +180,51 @@ RSpec.describe MidtransApi::Api::Transaction::Charge do
         expect(response.gross_amount).to eq '145000.00'
         expect(response.status_message).to eq 'Success, PERMATA VA transaction is successful'
         expect(response.transaction_status).to eq 'pending'
+      end
+
+      it 'returns success response bni virtual account' do
+        stub_request(:post, "#{client.config.api_url}/#{client.config.api_version}/charge")
+          .with(body: dummy_params_bni)
+          .to_return(status: 200, body: dummy_response_bni.to_json)
+        charge_api = described_class.new(client)
+        response = charge_api.post(dummy_params_bni)
+        expect(response).to be_instance_of MidtransApi::Model::Transaction::Charge
+        expect(response.transaction_time).to be_truthy
+        expect(response.status_code).to eq '201'
+        expect(response.gross_amount).to eq '20000.00'
+        expect(response.status_message).to eq 'Success, Bank Transfer transaction is created'
+        expect(response.transaction_status).to eq 'pending'
+        expect(response.va_numbers).to be_truthy
+      end
+
+      it 'returns success response bri virtual account' do
+        stub_request(:post, "#{client.config.api_url}/#{client.config.api_version}/charge")
+          .with(body: dummy_params_bri)
+          .to_return(status: 200, body: dummy_response_bri.to_json)
+        charge_api = described_class.new(client)
+        response = charge_api.post(dummy_params_bri)
+        expect(response).to be_instance_of MidtransApi::Model::Transaction::Charge
+        expect(response.transaction_time).to be_truthy
+        expect(response.status_code).to eq '201'
+        expect(response.gross_amount).to eq '20000.00'
+        expect(response.status_message).to eq 'Success, Bank Transfer transaction is created'
+        expect(response.transaction_status).to eq 'pending'
+        expect(response.va_numbers).to be_truthy
+      end
+
+      it 'returns success response cimb virtual account' do
+        stub_request(:post, "#{client.config.api_url}/#{client.config.api_version}/charge")
+          .with(body: dummy_params_cimb)
+          .to_return(status: 200, body: dummy_response_cimb.to_json)
+        charge_api = described_class.new(client)
+        response = charge_api.post(dummy_params_cimb)
+        expect(response).to be_instance_of MidtransApi::Model::Transaction::Charge
+        expect(response.transaction_time).to be_truthy
+        expect(response.status_code).to eq '201'
+        expect(response.gross_amount).to eq '20000.00'
+        expect(response.status_message).to eq 'Success, Bank Transfer transaction is created'
+        expect(response.transaction_status).to eq 'pending'
+        expect(response.va_numbers).to be_truthy
       end
     end
 
