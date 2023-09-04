@@ -228,42 +228,42 @@ RSpec.describe MidtransApi::Api::Transaction::Charge do
       end
     end
 
-    # context 'with invalid params' do
-    #   it 'raise ValidationError; gross amount not equal to the sum of item details' do
-    #     dummy_transaction_details[:gross_amount] = 50_000
-    #     dummy_response = {
-    #       "status_code": '400',
-    #       "status_message": 'One or more parameters in the payload is invalid.',
-    #       "validation_messages": [
-    #         'transaction_details.gross_amount is not equal to the sum of item_details'
-    #       ],
-    #       "id": '571936a7-15c9-48b3-9ae2-9c53d05b07df'
-    #     }
-    #     stub_request(:post, "#{client.config.api_url}/#{client.config.api_version}/charge")
-    #       .with(body: dummy_params)
-    #       .to_return(status: 400, body: dummy_response.to_json)
-    #     expect do
-    #       charge_api = described_class.new(client)
-    #       charge_api.post(dummy_params)
-    #     end.to raise_error(MidtransApi::Errors::ValidationError,
-    #                        'transaction_details.gross_amount is not equal to the sum of item_details')
-    #   end
+    context 'with invalid params' do
+      it 'raise ValidationError; gross amount not equal to the sum of item details' do
+        dummy_transaction_details[:gross_amount] = 50_000
+        dummy_response = {
+          "status_code": '400',
+          "status_message": 'One or more parameters in the payload is invalid.',
+          "validation_messages": [
+            'transaction_details.gross_amount is not equal to the sum of item_details'
+          ],
+          "id": '571936a7-15c9-48b3-9ae2-9c53d05b07df'
+        }
+        stub_request(:post, "#{client.config.api_url}/#{client.config.api_version}/charge")
+          .with(body: dummy_params_permata)
+          .to_return(status: 400, body: dummy_response.to_json)
+        expect do
+          charge_api = described_class.new(client)
+          charge_api.post(dummy_params_permata)
+        end.to raise_error(MidtransApi::Errors::ValidationError,
+                           'transaction_details.gross_amount is not equal to the sum of item_details')
+      end
 
-    #   it 'raise DuplicateOrderId; conflict order id' do
-    #     dummy_response = {
-    #       "status_code": '406',
-    #       "status_message": 'The request could not be completed due to a conflict with the current state of the target resource, please try again',
-    #       "id": '912fed6d-230e-410e-a002-d3e4cdf07789'
-    #     }
-    #     stub_request(:post, "#{client.config.api_url}/#{client.config.api_version}/charge")
-    #       .with(body: dummy_params)
-    #       .to_return(status: 406, body: dummy_response.to_json)
-    #     expect do
-    #       charge_api = described_class.new(client)
-    #       charge_api.post(dummy_params)
-    #     end.to raise_error(MidtransApi::Errors::DuplicateOrderId,
-    #                        'The request could not be completed due to a conflict with the current state of the target resource, please try again')
-    #   end
-    # end
+      it 'raise DuplicateOrderId; conflict order id' do
+        dummy_response = {
+          "status_code": '406',
+          "status_message": 'The request could not be completed due to a conflict with the current state of the target resource, please try again',
+          "id": '912fed6d-230e-410e-a002-d3e4cdf07789'
+        }
+        stub_request(:post, "#{client.config.api_url}/#{client.config.api_version}/charge")
+          .with(body: dummy_params_permata)
+          .to_return(status: 406, body: dummy_response.to_json)
+        expect do
+          charge_api = described_class.new(client)
+          charge_api.post(dummy_params_permata)
+        end.to raise_error(MidtransApi::Errors::DuplicateOrderId,
+                           'The request could not be completed due to a conflict with the current state of the target resource, please try again')
+      end
+    end
   end
 end
