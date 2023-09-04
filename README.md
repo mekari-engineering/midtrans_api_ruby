@@ -27,8 +27,9 @@ require 'midtrans_api'
 midtrans = MidtransApi::Client.new(
   client_key: 'YOUR-CLIENT-KEY',
   server_key: 'YOUR-SERVER-KEY',
-  sandbox: true|false
-  notification_url: 'https://example.com/callback'
+  sandbox: true|false,
+  notification_url: 'https://example.com/callback',
+  timeout: 30 # by default will be 60 (seconds)
 )
 
 # or
@@ -180,6 +181,55 @@ expire_response = midtrans.expire_transaction.post(order_id: "eb046679-285a-4136
 #=> expire_response returns MidtransApiMidtransApi::Model::Transaction::Expire instance
 ```
 
+#### Charge Transaction
+Charge transaction for payment type **bank_transfer**
+Available for these bank:
+- permata
+- bni
+- bri
+- cimb
+
+```ruby
+# "payment_type" => required
+# "transaction_details" => required
+# "customer_details" => optional
+# "item_details" => optional
+# "bank_transfer" => required
+charge_params = {
+    "payment_type": "bank_transfer",
+    "transaction_details": {
+        "gross_amount": 10000,
+        "order_id": "{{$timestamp}}" # specified by you
+    },
+    "customer_details": {
+        "email": "budi.utomo@Midtrans.com",
+        "first_name": "budi",
+        "last_name": "utomo",
+        "phone": "+6281 1234 1234"
+    },
+    "item_details": [
+    {
+       "id": "1388998298204",
+       "price": 5000,
+       "quantity": 1,
+       "name": "Ayam Zozozo"
+    },
+    {
+       "id": "1388998298205",
+       "price": 5000,
+       "quantity": 1,
+       "name": "Ayam Xoxoxo"
+    }
+   ],
+   "bank_transfer":{
+     "bank": "bni|bri|permata|cimb",
+     "va_number": "111111"
+  }
+}
+
+charge_response = midtrans.charge_transaction.post(charge_params)
+#=> charge_response returns MidtransApiMidtransApi::Model::Transaction::Charge instance
+```
 
 #### Check Status Payment
 ```ruby
