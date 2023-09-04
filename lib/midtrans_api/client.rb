@@ -10,6 +10,7 @@ require 'midtrans_api/api/credit_card/charge'
 require 'midtrans_api/api/credit_card/token'
 require 'midtrans_api/api/gopay/charge'
 require 'midtrans_api/api/transaction/expire'
+require 'midtrans_api/api/transaction/charge'
 require 'midtrans_api/api/check/balance'
 require 'midtrans_api/api/disbursement/payout'
 
@@ -22,6 +23,7 @@ require 'midtrans_api/model/credit_card/charge'
 require 'midtrans_api/model/credit_card/token'
 require 'midtrans_api/model/gopay/charge'
 require 'midtrans_api/model/transaction/expire'
+require 'midtrans_api/model/transaction/charge'
 require 'midtrans_api/model/check/balance'
 require 'midtrans_api/model/disbursement/payout'
 
@@ -70,6 +72,10 @@ module MidtransApi
 
     def expire_transaction
       @expire ||= MidtransApi::Api::Transaction::Expire.new(self)
+    end
+
+    def charge_transaction
+      @charge ||= MidtransApi::Api::Transaction::Charge.new(self)
     end
 
     def gopay_charge
