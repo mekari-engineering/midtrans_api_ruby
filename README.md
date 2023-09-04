@@ -287,6 +287,28 @@ charge_response = midtrans.charge_echannel_transaction.post(charge_echannel_para
 #=> charge_response returns MidtransApiMidtransApi::Model::Transaction::ChargeEchannel instance
 ```
 
+#### Charge Transaction with Custom Expiry
+```ruby
+charge_params_with_custom_expiry = {
+  "payment_type": "bank_transfer",
+  "bank_transfer": {
+    "bank": "permata"
+  },
+  "transaction_details": {
+    "order_id": "C17550",
+    "gross_amount": 145000
+  },
+  "custom_expiry": {
+      "order_time": "2016-12-07 11:54:12 +0700", # If not defined, expiry time starts from transaction time.
+      "expiry_duration": 60,
+      "unit": "second|minute|hour|day" # default is minute
+  }
+}
+
+charge_response = midtrans.charge_transaction.post(charge_params)
+#=> charge_response returns MidtransApiMidtransApi::Model::Transaction::Charge instance
+```
+
 #### Check Status Payment
 ```ruby
 dummy_order_id = "order-with-gopay"

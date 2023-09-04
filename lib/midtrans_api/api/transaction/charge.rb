@@ -23,7 +23,7 @@ module MidtransApi
           }.tap do |p|
             p[:customer_details] = params[:customer_details] unless params[:customer_details].nil?
             p[:item_details] = params[:item_details] unless params[:item_details].nil?
-            p[:expiry_time] = params[:expiry_time] unless params[:expiry_time].nil?
+            p[:custom_expiry] = params[:custom_expiry] unless params[:custom_expiry].nil?
           end
         end
       end
