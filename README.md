@@ -277,10 +277,10 @@ charge_echannel_params = {
           "name": "Jeruk"
         }
     ],
-    "echannel" : {
-        "bill_info1" : "Payment For:",
-        "bill_info2" : "debt",
-        "bill_key" : "081211111111"
+    "echannel": {
+        "bill_info1": "Payment For:",
+        "bill_info2": "debt",
+        "bill_key": "081211111111"
     }
 }
 charge_response = midtrans.charge_echannel_transaction.post(charge_echannel_params)
