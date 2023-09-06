@@ -17,7 +17,10 @@ module MidtransApi
                             :currency,
                             :signature_key,
                             :expiry_time,
-                            :permata_va_number
+                            :permata_va_number,
+                            :bill_key,
+                            :biller_code,
+                            :approval_code
 
         def resolve_params_attr(attr)
           attr.to_s

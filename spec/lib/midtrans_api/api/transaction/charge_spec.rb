@@ -94,6 +94,35 @@ RSpec.describe MidtransApi::Api::Transaction::Charge do
     }
   end
 
+  let(:dummy_params_mandiri_bill) do
+    {
+      "payment_type": "echannel",
+      "transaction_details": {
+          "order_id": "1388",
+          "gross_amount": 95000
+          },
+      "item_details": [
+          {
+            "id": "a1",
+            "price": 50000,
+            "quantity": 2,
+            "name": "Apel"
+          },
+          {
+           "id": "a2",
+            "price": 45000,
+            "quantity": 1,
+            "name": "Jeruk"
+          }
+      ],
+      "echannel": {
+        "bill_info1": "Payment For:",
+        "bill_info2": "debt",
+        "bill_key": "081211111111"
+      }
+    }
+  end
+
   describe '#post' do
     context 'with valid params' do
       dummy_response_permata = {
@@ -168,12 +197,28 @@ RSpec.describe MidtransApi::Api::Transaction::Charge do
         "expiry_time": "2023-06-29 15:15:58"
       }
 
+      dummy_response_mandiri_bill = {
+        "status_code": "201",
+        "status_message": "Success, Mandiri Bill transaction is successful",
+        "transaction_id": "883af6a4-c1b4-4d39-9bd8-b148fcebe853",
+        "order_id": "tes",
+        "gross_amount": "1000.00",
+        "payment_type": "echannel",
+        "transaction_time": "2016-06-19 14:40:19",
+        "transaction_status": "pending",
+        "fraud_status": "accept",
+        "bill_key": "990000000260",
+        "biller_code": "70012",
+        "currency": "IDR",
+        "expiry_time": "2017-01-09 09:56:44"
+      }
+
       it 'returns success response permata virtual account' do
         stub_request(:post, "#{client.config.api_url}/#{client.config.api_version}/charge")
           .with(body: dummy_params_permata)
           .to_return(status: 200, body: dummy_response_permata.to_json)
         charge_api = described_class.new(client)
-        response = charge_api.post(dummy_params_permata)
+        response = charge_api.post(dummy_params_permata, "bank_transfer")
         expect(response).to be_instance_of MidtransApi::Model::Transaction::Charge
         expect(response.transaction_time).to be_truthy
         expect(response.status_code).to eq '201'
@@ -187,7 +232,7 @@ RSpec.describe MidtransApi::Api::Transaction::Charge do
           .with(body: dummy_params_bni)
           .to_return(status: 200, body: dummy_response_bni.to_json)
         charge_api = described_class.new(client)
-        response = charge_api.post(dummy_params_bni)
+        response = charge_api.post(dummy_params_bni, "bank_transfer")
         expect(response).to be_instance_of MidtransApi::Model::Transaction::Charge
         expect(response.transaction_time).to be_truthy
         expect(response.status_code).to eq '201'
@@ -202,7 +247,7 @@ RSpec.describe MidtransApi::Api::Transaction::Charge do
           .with(body: dummy_params_bri)
           .to_return(status: 200, body: dummy_response_bri.to_json)
         charge_api = described_class.new(client)
-        response = charge_api.post(dummy_params_bri)
+        response = charge_api.post(dummy_params_bri, "bank_transfer")
         expect(response).to be_instance_of MidtransApi::Model::Transaction::Charge
         expect(response.transaction_time).to be_truthy
         expect(response.status_code).to eq '201'
@@ -217,7 +262,7 @@ RSpec.describe MidtransApi::Api::Transaction::Charge do
           .with(body: dummy_params_cimb)
           .to_return(status: 200, body: dummy_response_cimb.to_json)
         charge_api = described_class.new(client)
-        response = charge_api.post(dummy_params_cimb)
+        response = charge_api.post(dummy_params_cimb, "bank_transfer")
         expect(response).to be_instance_of MidtransApi::Model::Transaction::Charge
         expect(response.transaction_time).to be_truthy
         expect(response.status_code).to eq '201'
@@ -225,6 +270,20 @@ RSpec.describe MidtransApi::Api::Transaction::Charge do
         expect(response.status_message).to eq 'Success, Bank Transfer transaction is created'
         expect(response.transaction_status).to eq 'pending'
         expect(response.va_numbers).to be_truthy
+      end
+
+      it 'returns success response mandiri bill payment' do
+        stub_request(:post, "#{client.config.api_url}/#{client.config.api_version}/charge")
+          .with(body: dummy_params_mandiri_bill)
+          .to_return(status: 200, body: dummy_response_mandiri_bill.to_json)
+        charge_api = described_class.new(client)
+        response = charge_api.post(dummy_params_mandiri_bill, "echannel")
+        expect(response).to be_instance_of MidtransApi::Model::Transaction::Charge
+        expect(response.transaction_time).to be_truthy
+        expect(response.status_code).to eq '201'
+        expect(response.status_message).to eq 'Success, Mandiri Bill transaction is successful'
+        expect(response.gross_amount).to eq '1000.00'
+        expect(response.biller_code).to eq '70012'
       end
     end
 
@@ -244,7 +303,7 @@ RSpec.describe MidtransApi::Api::Transaction::Charge do
           .to_return(status: 400, body: dummy_response.to_json)
         expect do
           charge_api = described_class.new(client)
-          charge_api.post(dummy_params_permata)
+          charge_api.post(dummy_params_permata, "bank_transfer")
         end.to raise_error(MidtransApi::Errors::ValidationError,
                            'transaction_details.gross_amount is not equal to the sum of item_details')
       end
@@ -260,7 +319,7 @@ RSpec.describe MidtransApi::Api::Transaction::Charge do
           .to_return(status: 406, body: dummy_response.to_json)
         expect do
           charge_api = described_class.new(client)
-          charge_api.post(dummy_params_permata)
+          charge_api.post(dummy_params_permata, "bank_transfer")
         end.to raise_error(MidtransApi::Errors::DuplicateOrderId,
                            'The request could not be completed due to a conflict with the current state of the target resource, please try again')
       end
