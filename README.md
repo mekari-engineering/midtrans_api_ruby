@@ -194,22 +194,14 @@ A list of bank transfer payment methods supported by Midtrans is given below.
 - BRI Virtual Account
 - CIMB Virtual Account
 
-Note: Mandiri Bill Payment has different request payload, please refer to Charge transaction for payment type echannel section.
-
-##### Charge transaction for payment type bank_transfer
-Available for these bank:
-- permata
-- bni
-- bri
-- cimb
-
+##### Charge transaction
 ```ruby
-# "payment_type" => required
+# "payment_type" => required <"bank_transfer"|"echannel">
 # "transaction_details" => required
 # "customer_details" => optional
 # "item_details" => optional
-# "bank_transfer" => required
-charge_params = {
+# "bank_transfer"|"echannel" => required
+charge_params_bank_transfer = {
     "payment_type": "bank_transfer",
     "transaction_details": {
         "gross_amount": 10000,
@@ -241,26 +233,10 @@ charge_params = {
   }
 }
 
-charge_response = midtrans.charge_transaction.post(charge_params)
-#=> charge_response returns MidtransApiMidtransApi::Model::Transaction::Charge instance
-```
-
-##### Charge Transaction for payment_type echannel
-```ruby
-# "payment_type" => required
-# "transaction_details" => required
-# "customer_details" => optional
-# "item_details" => optional
-# "echannel" => required
-#     "bill_info1" => required (label 1) | allows only 10 char, if exceed will be truncated
-#     "bill_info2" => required (value for label 1) | allows only 30 char, if exceed will be truncated
-#     "bill_info3" => optional
-#     "bill_key" => optional
-# note: "bill_info<number>" is available untill "bill_info8"
-charge_echannel_params = {
+charge_params_echannel = {
     "payment_type": "echannel",
     "transaction_details": {
-        "order_id": "1388",
+        "order_id": "1388", # specified by you
         "gross_amount": 95000
         },
     "item_details": [
@@ -283,8 +259,10 @@ charge_echannel_params = {
         "bill_key": "081211111111"
     }
 }
-charge_response = midtrans.charge_echannel_transaction.post(charge_echannel_params)
-#=> charge_response returns MidtransApiMidtransApi::Model::Transaction::ChargeEchannel instance
+
+charge_response = midtrans.charge_transaction.post(charge_params_bank_transfer, "bank_transfer") # => payment type bank_transfer
+charge_response = midtrans.charge_transaction.post(charge_params_echannel, "echannel") # => payment type echannel
+#=> charge_response returns MidtransApiMidtransApi::Model::Transaction::Charge instance
 ```
 
 #### Charge Transaction with Custom Expiry
@@ -305,7 +283,7 @@ charge_params_with_custom_expiry = {
   }
 }
 
-charge_response = midtrans.charge_transaction.post(charge_params)
+charge_response = midtrans.charge_transaction.post(charge_params_with_custom_expiry, "bank_transfer|echannel")
 #=> charge_response returns MidtransApiMidtransApi::Model::Transaction::Charge instance
 ```
 
