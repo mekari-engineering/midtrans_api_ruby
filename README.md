@@ -27,8 +27,9 @@ require 'midtrans_api'
 midtrans = MidtransApi::Client.new(
   client_key: 'YOUR-CLIENT-KEY',
   server_key: 'YOUR-SERVER-KEY',
-  sandbox: true|false
-  notification_url: 'https://example.com/callback'
+  sandbox: true|false,
+  notification_url: 'https://example.com/callback',
+  timeout: 30 # by default will be 60 (seconds)
 )
 
 # or
@@ -180,6 +181,111 @@ expire_response = midtrans.expire_transaction.post(order_id: "eb046679-285a-4136
 #=> expire_response returns MidtransApiMidtransApi::Model::Transaction::Expire instance
 ```
 
+#### Charge Transaction
+Charge Transaction Payment Method: **Bank Transfer**
+_Bank Transfer_ is one of the payment methods offered by Midtrans. By using this method, your customers can make a payment via bank transfer and Midtrans will send real time notification when the payment is completed.
+
+A list of bank transfer payment methods supported by Midtrans is given below.
+
+- Permata Virtual Account
+- BCA Virtual Account (Please refer to BCA Virtual Account Charge section)
+- Mandiri Bill Payment
+- BNI Virtual Account
+- BRI Virtual Account
+- CIMB Virtual Account
+
+##### Charge transaction
+```ruby
+# "payment_type" => required <"bank_transfer"|"echannel">
+# "transaction_details" => required
+# "customer_details" => optional
+# "item_details" => optional
+# "bank_transfer"|"echannel" => required
+charge_params_bank_transfer = {
+    "payment_type": "bank_transfer",
+    "transaction_details": {
+        "gross_amount": 10000,
+        "order_id": "{{$timestamp}}" # specified by you
+    },
+    "customer_details": {
+        "email": "budi.utomo@Midtrans.com",
+        "first_name": "budi",
+        "last_name": "utomo",
+        "phone": "+6281 1234 1234"
+    },
+    "item_details": [
+    {
+       "id": "1388998298204",
+       "price": 5000,
+       "quantity": 1,
+       "name": "Ayam Zozozo"
+    },
+    {
+       "id": "1388998298205",
+       "price": 5000,
+       "quantity": 1,
+       "name": "Ayam Xoxoxo"
+    }
+   ],
+   "bank_transfer":{
+     "bank": "bni|bri|permata|cimb",
+     "va_number": "111111"
+  }
+}
+
+charge_params_echannel = {
+    "payment_type": "echannel",
+    "transaction_details": {
+        "order_id": "1388", # specified by you
+        "gross_amount": 95000
+        },
+    "item_details": [
+        {
+          "id": "a1",
+          "price": 50000,
+          "quantity": 2,
+          "name": "Apel"
+        },
+        {
+         "id": "a2",
+          "price": 45000,
+          "quantity": 1,
+          "name": "Jeruk"
+        }
+    ],
+    "echannel": {
+        "bill_info1": "Payment For:",
+        "bill_info2": "debt",
+        "bill_key": "081211111111"
+    }
+}
+
+charge_response = midtrans.charge_transaction.post(charge_params_bank_transfer, "bank_transfer") # => payment type bank_transfer
+charge_response = midtrans.charge_transaction.post(charge_params_echannel, "echannel") # => payment type echannel
+#=> charge_response returns MidtransApiMidtransApi::Model::Transaction::Charge instance
+```
+
+#### Charge Transaction with Custom Expiry
+```ruby
+charge_params_with_custom_expiry = {
+  "payment_type": "bank_transfer",
+  "bank_transfer": {
+    "bank": "permata"
+  },
+  "transaction_details": {
+    "order_id": "C17550",
+    "gross_amount": 145000
+  },
+  "custom_expiry": {
+      "order_time": "2016-12-07 11:54:12 +0700", # If not defined, expiry time starts from transaction time.
+      "expiry_duration": 60,
+      "unit": "second|minute|hour|day" # default is minute
+  }
+}
+
+charge_response = midtrans.charge_transaction.post(charge_params_with_custom_expiry, "bank_transfer|echannel")
+#=> charge_response returns MidtransApiMidtransApi::Model::Transaction::Charge instance
+```
 
 #### Check Status Payment
 ```ruby
