@@ -9,7 +9,7 @@ module MidtransApi
         def post(params)
           response = client.post(PATH, params)
 
-          MidtransApi::Model::Disbursement::Payout.new(response)
+          MidtransApi::Model::Merchant::Create.new(response)
         end
       end
     end

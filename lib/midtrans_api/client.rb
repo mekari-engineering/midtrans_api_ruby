@@ -102,6 +102,10 @@ module MidtransApi
       @payout ||= MidtransApi::Api::Disbursement::Payout.new(self)
     end
 
+    def merchant
+      @merchant ||= MidtransApi::Api::Merchant::Create.new(self)
+    end
+
     def get(url, params)
       response = @connection.get(url, params)
       response.body
