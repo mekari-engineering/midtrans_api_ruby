@@ -23,7 +23,7 @@ module MidtransApi
         #   }
         # ]
         def get(partner_id, merchant_id)
-          client.get(PATH, params, {
+          client.get(PATH, {}, {
             'X-PARTNER-ID': partner_id,
             'X-MERCHANT-ID': merchant_id
           })
