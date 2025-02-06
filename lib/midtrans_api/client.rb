@@ -13,6 +13,7 @@ require 'midtrans_api/api/transaction/expire'
 require 'midtrans_api/api/transaction/charge'
 require 'midtrans_api/api/check/balance'
 require 'midtrans_api/api/disbursement/payout'
+require 'midtrans_api/api/merchant/create'
 
 require 'midtrans_api/middleware/handle_response_exception'
 
@@ -26,6 +27,7 @@ require 'midtrans_api/model/transaction/expire'
 require 'midtrans_api/model/transaction/charge'
 require 'midtrans_api/model/check/balance'
 require 'midtrans_api/model/disbursement/payout'
+require 'midtrans_api/model/merchant/create'
 
 module MidtransApi
   class Client
