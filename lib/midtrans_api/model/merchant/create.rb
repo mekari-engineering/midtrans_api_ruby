@@ -4,13 +4,16 @@ module MidtransApi
   module Model
     module Merchant
       class Create < MidtransApi::Model::Base
-        resource_attributes :email,
+        resource_attributes :status_code,
+                            :status_message,
+                            :merchant_id,
                             :merchant_name,
+                            :merchant_phone_number,
+                            :email,
                             :callback_url,
                             :notification_url,
                             :pay_account_url,
                             :owner_name,
-                            :merchant_phone_number,
                             :mcc,
                             :entity_type,
                             :business_name
