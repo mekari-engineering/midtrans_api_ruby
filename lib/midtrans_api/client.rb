@@ -14,6 +14,7 @@ require 'midtrans_api/api/transaction/charge'
 require 'midtrans_api/api/check/balance'
 require 'midtrans_api/api/disbursement/payout'
 require 'midtrans_api/api/merchant/create'
+require 'midtrans_api/api/channel/list'
 
 require 'midtrans_api/middleware/handle_response_exception'
 
@@ -108,8 +109,12 @@ module MidtransApi
       @merchant ||= MidtransApi::Api::Merchant::Create.new(self)
     end
 
-    def get(url, params)
-      response = @connection.get(url, params)
+    def channel
+      @channel ||= MidtransApi::Api::Channel::List.new(self)
+    end
+
+    def get(url, params, headers = {})
+      response = @connection.get(url, params, headers)
       response.body
     end
 
