@@ -6,8 +6,10 @@ module MidtransApi
       class Create < MidtransApi::Api::Base
         PATH = 'merchants'
 
-        def post(params)
-          response = client.post(PATH, params)
+        def post(params, partner_id)
+          response = client.post(PATH, params, {
+            'X-PARTNER-ID': partner_id
+          })
 
           MidtransApi::Model::Merchant::Create.new(response)
         end

@@ -23,14 +23,14 @@ describe MidtransApi::Api::Merchant::Create do
       "merchant_phone_number": "81211111111",
       "mcc": "Event",
       "entity_type": "corporate",
-      "business_name": "PT Business Name"    
+      "business_name": "PT Business Name"
     }
   end
 
   let(:success_response) do
     {
       "status_code": "200",
-      "status_message": "Merchants have been successfully created.",    
+      "status_message": "Merchants have been successfully created.",
       "merchant_id": "M123456",
       "merchant_name": "HQ Midtrans Merchant",
       "merchant_phone_number": "81211111111",
@@ -52,9 +52,9 @@ describe MidtransApi::Api::Merchant::Create do
       )
 
       payouts_api = described_class.new(client)
-      response = payouts_api.post(params)
+      response = payouts_api.post(params, 'partner_id')
       expect(response).to be_instance_of MidtransApi::Model::Merchant::Create
-      expect(response.email).to eq(success_response[:email])  
+      expect(response.email).to eq(success_response[:email])
     end
   end
 end

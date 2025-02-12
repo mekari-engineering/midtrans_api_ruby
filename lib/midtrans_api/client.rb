@@ -118,8 +118,8 @@ module MidtransApi
       response.body
     end
 
-    def post(url, params)
-      response = @connection.post(url, params)
+    def post(url, params, headers = {})
+      response = @connection.post(url, params, headers)
       response.body
     end
 
