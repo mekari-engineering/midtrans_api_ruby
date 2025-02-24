@@ -7,7 +7,8 @@ module MidtransApi
                   :notification_url,
                   :sandbox_mode,
                   :logger,
-                  :timeout
+                  :timeout,
+                  :log_headers
     attr_reader   :api_version
 
     def initialize(options = {})
@@ -17,9 +18,13 @@ module MidtransApi
       @sandbox_mode     = options[:sandbox] || false
       @timeout          = options[:timeout] || 60
       @api_version      = options[:api_version] || :v2
+      @use_partner_api  = options[:use_partner_api] || false
+      @log_headers     = options[:log_headers] || false
     end
 
     def api_url
+      return MidtransApi::API_PARTNER_URL if @use_partner_api
+
       return MidtransApi::API_SANDBOX_URL if sandbox_mode
 
       MidtransApi::API_PRODUCTION_URL
