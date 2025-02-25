@@ -3,7 +3,7 @@
 module MidtransApi
   API_PRODUCTION_URL = 'https://api.midtrans.com'
   API_SANDBOX_URL = 'https://api.sandbox.midtrans.com'
-  API_PARTNER_URL = 'https://partner-api.midtrans.com'
+  API_PARTNER_URL = 'https://partner-api.midtrans.com/api'
 
   class << self
     attr_accessor :configuration
