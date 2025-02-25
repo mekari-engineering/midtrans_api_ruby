@@ -4,7 +4,7 @@ module MidtransApi
   module Api
     module Channel
       class List < MidtransApi::Api::Base
-        PATH = 'channels'
+        PATH = 'iris/channels'
 
         # Get list of channels for specific merchant
         # [String] partner_id
