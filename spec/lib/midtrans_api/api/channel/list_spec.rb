@@ -29,7 +29,7 @@ describe MidtransApi::Api::Channel::List do
 
   describe '#get' do
     it 'returns expected response' do
-      stub_request(:get, "#{client.config.api_url}/#{client.config.api_version}/channels").to_return(
+      stub_request(:get, "#{client.config.api_url}/#{client.config.api_version}/iris/channels").to_return(
         status: 200, body: success_response.to_json
       )
 
