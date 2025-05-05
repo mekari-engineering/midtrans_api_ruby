@@ -29,6 +29,8 @@ midtrans = MidtransApi::Client.new(
   server_key: 'YOUR-SERVER-KEY',
   sandbox: true|false,
   notification_url: 'https://example.com/callback',
+  filtered_logs: %[word1 word2],
+  logger: Logger.new(STDOUT),
   timeout: 30 # by default will be 60 (seconds)
 )
 
