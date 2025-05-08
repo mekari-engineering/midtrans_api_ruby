@@ -58,7 +58,7 @@ module MidtransApi
           connection.response :logger, logger,
                               full_hide_params: options[:filtered_logs] || [],
                               mask_params: options[:mask_params] || [],
-                              formatter: XenditApi::Middleware::FaradayLogFormatter
+                              formatter: MidtransApi::Middleware::FaradayLogFormatter
         end
       end
     end
