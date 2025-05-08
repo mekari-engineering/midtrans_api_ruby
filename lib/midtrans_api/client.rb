@@ -17,6 +17,7 @@ require 'midtrans_api/api/merchant/create'
 require 'midtrans_api/api/channel/list'
 
 require 'midtrans_api/middleware/handle_response_exception'
+require 'midtrans_api/middleware/faraday_log_formatter'
 
 require 'midtrans_api/model/base'
 require 'midtrans_api/model/check/status'
@@ -55,17 +56,10 @@ module MidtransApi
 
         logger = find_logger(options[:logger])
         if logger
-          connection.response :logger, logger, { headers: @config.log_headers, bodies: true } do |log|
-            filtered_logs = options[:filtered_logs]
-            if filtered_logs.respond_to?(:each)
-              filtered_logs.each do |filter|
-                log.filter(/(#{filter}":\s*")(.*?)(")/i, '\1[FILTERED]\3')
-                log.filter(/(#{filter}":\s*)(\d+(?:\.\d+)?|true|false)/i, '\1[FILTERED]')
-                log.filter(/(#{filter}":\s*)(\[.*?\])/i, '\1[FILTERED]')
-                log.filter(%r{(#{filter}=)([\w+-.?@:/]+)}, '\1[FILTERED]')
-              end
-            end
-          end
+          connection.response :logger, logger,
+                              full_hide_params: options[:filtered_logs] || [],
+                              mask_params: options[:mask_params] || [],
+                              formatter: MidtransApi::Middleware::FaradayLogFormatter
         end
       end
     end
