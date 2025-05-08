@@ -17,6 +17,7 @@ require 'midtrans_api/api/merchant/create'
 require 'midtrans_api/api/channel/list'
 
 require 'midtrans_api/middleware/handle_response_exception'
+require 'midtrans_api/middleware/faraday_log_formatter'
 
 require 'midtrans_api/model/base'
 require 'midtrans_api/model/check/status'
