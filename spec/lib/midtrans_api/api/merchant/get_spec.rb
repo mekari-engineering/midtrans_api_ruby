@@ -86,6 +86,34 @@ describe MidtransApi::Api::Merchant::Get do
     }
   end
 
+  let(:merchants_with_unexpected_fields_response) do
+    {
+      "status_code": "200",
+      "status_message": "Merchants have been successfully retrieved.",
+      "unexpected_root_field": "some_value",
+      "merchants": [
+        {
+          "merchant_id": "G221991147",
+          "merchant_name": "MSN KAP Agus Ubaidillah dan Rekan01",
+          "merchant_phone_number": "+621000000000",
+          "email": "dhany+39457_79@mekari.com",
+          "unexpected_field": "unexpected_value",
+          "another_unexpected_field": {
+            "nested": "data"
+          }
+        },
+        {
+          "merchant_id": "G539217527",
+          "merchant_name": "MSN KAP Agus Ubaidillah dan Rekan01",
+          "merchant_phone_number": "+621000000000",
+          "email": "dhany+39457_80@mekari.com",
+          "extra_field": 12345,
+          "boolean_field": true
+        }
+      ]
+    }
+  end
+
   describe '#get' do
     context 'with keyword parameter' do
       it 'returns expected response' do
@@ -230,6 +258,56 @@ describe MidtransApi::Api::Merchant::Get do
         expect(second_merchant.merchant_name).to eq('Test Merchant')
         expect(second_merchant.merchant_phone_number).to eq('+621000000000')
         expect(second_merchant.email).to be_nil
+      end
+    end
+
+    context 'when response contains unexpected fields' do
+      it 'ignores unexpected fields and processes only expected ones' do
+        partner_id = '739'
+        params = {}
+        
+        stub_request(:get, "#{client.config.api_url}/#{client.config.api_version}/merchants")
+          .to_return(status: 200, body: merchants_with_unexpected_fields_response.to_json)
+
+        merchant_api = described_class.new(client)
+        response = merchant_api.get(params, partner_id)
+        
+        expect(response).to be_instance_of MidtransApi::Model::Merchant::Get
+        expect(response.merchants).to be_an(Array)
+        expect(response.merchants.length).to eq(2)
+        
+        # Verify that unexpected root-level fields are ignored
+        expect(response).not_to respond_to(:unexpected_root_field)
+        
+        merchant_list = response.merchant_list
+        expect(merchant_list.length).to eq(2)
+        
+        # Test first merchant - should only have expected fields
+        first_merchant = merchant_list.first
+        expect(first_merchant.merchant_id).to eq('G221991147')
+        expect(first_merchant.merchant_name).to eq('MSN KAP Agus Ubaidillah dan Rekan01')
+        expect(first_merchant.merchant_phone_number).to eq('+621000000000')
+        expect(first_merchant.email).to eq('dhany+39457_79@mekari.com')
+        
+        # Verify that unexpected merchant fields are ignored
+        expect(first_merchant).not_to respond_to(:unexpected_field)
+        expect(first_merchant).not_to respond_to(:another_unexpected_field)
+        
+        # Test second merchant - should only have expected fields
+        second_merchant = merchant_list.last
+        expect(second_merchant.merchant_id).to eq('G539217527')
+        expect(second_merchant.merchant_name).to eq('MSN KAP Agus Ubaidillah dan Rekan01')
+        expect(second_merchant.merchant_phone_number).to eq('+621000000000')
+        expect(second_merchant.email).to eq('dhany+39457_80@mekari.com')
+        
+        # Verify that unexpected merchant fields are ignored
+        expect(second_merchant).not_to respond_to(:extra_field)
+        expect(second_merchant).not_to respond_to(:boolean_field)
+        
+        # Verify to_h method only returns expected fields
+        first_merchant_hash = first_merchant.to_h
+        expect(first_merchant_hash.keys).to contain_exactly(:merchant_id, :merchant_name, :merchant_phone_number, :email)
+        expect(first_merchant_hash[:merchant_id]).to eq('G221991147')
       end
     end
   end
