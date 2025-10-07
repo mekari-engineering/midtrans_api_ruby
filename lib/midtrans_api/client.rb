@@ -15,6 +15,7 @@ require 'midtrans_api/api/check/balance'
 require 'midtrans_api/api/disbursement/payout'
 require 'midtrans_api/api/merchant/create'
 require 'midtrans_api/api/merchant/update_notification'
+require 'midtrans_api/api/merchant/get'
 require 'midtrans_api/api/channel/list'
 
 require 'midtrans_api/middleware/handle_response_exception'
@@ -32,6 +33,7 @@ require 'midtrans_api/model/check/balance'
 require 'midtrans_api/model/disbursement/payout'
 require 'midtrans_api/model/merchant/create'
 require 'midtrans_api/model/merchant/update_notification'
+require 'midtrans_api/model/merchant/get'
 
 module MidtransApi
   class Client
@@ -108,6 +110,10 @@ module MidtransApi
 
     def merchant_update_notification
       @merchant_update_notification ||= MidtransApi::Api::Merchant::UpdateNotification.new(self)
+    end
+
+    def get_merchant
+      @merchant_get ||= MidtransApi::Api::Merchant::Get.new(self)
     end
 
     def channel
