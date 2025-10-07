@@ -1,6 +1,25 @@
-# midtrans_api_ruby
+# Midtrans API Ruby Client
 
-Midtrans API client library for Ruby
+A Ruby client library for the [Midtrans Payment Gateway API](https://api-docs.midtrans.com/). This gem provides a clean and intuitive interface to interact with Midtrans services including payment transactions, virtual accounts, disbursements, and merchant management.
+
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](http://opensource.org/licenses/MIT)
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+  - [Credit Card Payments](#credit-card-payments)
+  - [GoPay Payments](#gopay-payments)
+  - [Bank Transfer / Virtual Account](#bank-transfer--virtual-account)
+  - [Transaction Management](#transaction-management)
+  - [Merchant Management](#merchant-management)
+  - [Disbursements](#disbursements)
+  - [Utilities](#utilities)
+- [Error Handling](#error-handling)
+- [Development](#development)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Installation
 
@@ -12,306 +31,440 @@ gem 'mekari-midtrans-api'
 
 And then execute:
 
-    $ bundle
+```bash
+$ bundle install
+```
 
 Or install it yourself as:
 
-    $ gem install mekari-midtrans-api
+```bash
+$ gem install mekari-midtrans-api
+```
 
-## Usage
+## Configuration
 
-### Build client
+### Basic Configuration
 ```ruby
 require 'midtrans_api'
 
 midtrans = MidtransApi::Client.new(
   client_key: 'YOUR-CLIENT-KEY',
   server_key: 'YOUR-SERVER-KEY',
-  sandbox: true|false,
-  notification_url: 'https://example.com/callback',
-  filtered_logs: %[word1 word2],
-  logger: Logger.new(STDOUT),
-  timeout: 30 # by default will be 60 (seconds)
+  sandbox: true,  # Set to false for production
+  timeout: 30     # Optional, default is 60 seconds
 )
 
-# or
-
-midtrans = MidtransApi::Client.new do |client|
-  client.client_key = 'YOUR-CLIENT-KEY'
-  client.server_key = 'YOUR-SERVER-KEY'
-  client.sandbox_mode = true|false
-  client.notification_url = 'https://example.com/callback'
+# Using block initialization
+midtrans = MidtransApi::Client.new do |config|
+  config.client_key = 'YOUR-CLIENT-KEY'
+  config.server_key = 'YOUR-SERVER-KEY'
+  config.sandbox_mode = true
 end
 ```
 
-### Basic usage
+### Advanced Configuration
 
-#### Credit Card Online Installment Charge
 ```ruby
-# get credit card token
+midtrans = MidtransApi::Client.new(
+  client_key: 'YOUR-CLIENT-KEY',
+  server_key: 'YOUR-SERVER-KEY',
+  sandbox: false,
+  notification_url: 'https://example.com/callback',  # Override notification URL
+  logger: Logger.new(STDOUT),                        # Enable logging
+  filtered_logs: %w[card_number card_cvv],           # Filter sensitive data from logs
+  mask_params: %w[token_id],                         # Mask specific parameters
+  timeout: 30                                         # Request timeout in seconds
+)
+```
+
+## Usage
+
+### Credit Card Payments
+
+#### Get Credit Card Token
+```ruby
 credit_card_params = {
   currency: 'IDR',
   gross_amount: 12500,
   card_number: 5573381072196900,
-  card_exp_month: 02,
+  card_exp_month: 2,
   card_exp_year: 2025,
   card_cvv: 123
 }
 
-credit_card_token = midtrans.credit_card_token.get(credit_card_params)
-#=> credit_card_token returns MidtransApi::Model::CreditCard::Token instance
+token = midtrans.credit_card_token.get(credit_card_params)
+# Returns: MidtransApi::Model::CreditCard::Token
+```
 
+#### Charge with Installment
+
+```ruby
 charge_params = {
-  "payment_type": 'credit_card',
-  "transaction_details": {
-    "order_id": 'order-with-credit_card_installment',
-    "gross_amount": 12500
+  payment_type: 'credit_card',
+  transaction_details: {
+    order_id: 'order-101',
+    gross_amount: 12500
   },
-  "credit_card": {
-    "token_id": credit_card_token.token_id,
-    "authentication": true,
-    "installment_term": 3,
-    "bank": 'mandiri',
-    "bins": [
-      'mandiri'
-    ]
+  credit_card: {
+    token_id: token.token_id,
+    authentication: true,
+    installment_term: 3,
+    bank: 'mandiri'
   },
-  "customer_details": {
-    "first_name": 'Budi',
-    "last_name": 'Utomo',
-    "email": 'test@midtrans.com',
-    "phone": '081111333344'
+  customer_details: {
+    first_name: 'Budi',
+    last_name: 'Utomo',
+    email: 'test@midtrans.com',
+    phone: '081111333344'
   },
-  "item_details": [
+  item_details: [
     {
-      "id": 'invoice-1',
-      "price": 12500,
-      "quantity": 1,
-      "name": 'Invoice #1'
+      id: 'invoice-1',
+      price: 12500,
+      quantity: 1,
+      name: 'Invoice #1'
     }
   ]
 }
 
-credit_card_charge = midtrans.credit_card_charge.post(charge_params)
-#=> credit_card_charge returns MidtransApiMidtransApi::Model::CreditCard::Charge instance
+charge = midtrans.credit_card_charge.post(charge_params)
+# Returns: MidtransApi::Model::CreditCard::Charge
 ```
 
-#### Gopay Charge
+### GoPay Payments
+
 ```ruby
 charge_params = {
-  "payment_type": "gopay",
-  "transaction_details": {
-      "order_id": "order-with-gopay",
-      "gross_amount": 12500
+  payment_type: 'gopay',
+  transaction_details: {
+    order_id: 'order-102',
+    gross_amount: 12500
   },
-  "item_details": [
-      {
-          "id": "bluedio-turbine",
-          "price": 12500,
-          "quantity": 1,
-          "name": "Bluedio H+ Turbine Headphone with Bluetooth 4.1 -"
-      }
+  item_details: [
+    {
+      id: 'item-1',
+      price: 12500,
+      quantity: 1,
+      name: 'Product Name'
+    }
   ],
-  "customer_details": {
-      "first_name": "Budi",
-      "last_name": "Utomo",
-      "email": "budi.utomo@midtrans.com",
-      "phone": "081223323423"
+  customer_details: {
+    first_name: 'Budi',
+    last_name: 'Utomo',
+    email: 'budi.utomo@midtrans.com',
+    phone: '081223323423'
   },
-  "gopay": {
-      "enable_callback": true,
-      "callback_url": "someapps://callback"
+  gopay: {
+    enable_callback: true,
+    callback_url: 'someapps://callback'
   }
 }
 
-gopay_charge = midtrans.gopay_charge.post(charge_params)
-#=> gopay_charge returns MidtransApiMidtransApi::Model::Gopay::Charge instance
+charge = midtrans.gopay_charge.post(charge_params)
+# Returns: MidtransApi::Model::Gopay::Charge
 ```
 
-#### BCA Virtual Account Charge
+### Bank Transfer / Virtual Account
+
+#### BCA Virtual Account
+
 ```ruby
 charge_params = {
-  "payment_type": "bank_transfer",
-  "transaction_details": {
-      "order_id": "order-with-bca-virtua-account",
-      "gross_amount": 12500
+  payment_type: 'bank_transfer',
+  transaction_details: {
+    order_id: 'order-103',
+    gross_amount: 12500
   },
-  "item_details": [
-      {
-          "id": "bluedio-turbine",
-          "price": 12500,
-          "quantity": 1,
-          "name": "Bluedio H+ Turbine Headphone with Bluetooth 4.1 -"
-      }
+  item_details: [
+    {
+      id: 'item-1',
+      price: 12500,
+      quantity: 1,
+      name: 'Product Name'
+    }
   ],
-  "customer_details": {
-      "first_name": "Budi",
-      "last_name": "Utomo",
-      "email": "budi.utomo@midtrans.com",
-      "phone": "081223323423"
+  customer_details: {
+    first_name: 'Budi',
+    last_name: 'Utomo',
+    email: 'budi.utomo@midtrans.com',
+    phone: '081223323423'
   },
-  "bank_transfer": {
-    "bank": "bca",
-    "va_number": "11111111",
-    "free_text": {
-      "inquiry": [
-        {
-          "id": "Free Text Inquiry ID",
-          "en": "Free Text Inquiry EN"
-        }
-      ],
-      "payment": [
-        {
-          "id": "Free Text Payment ID",
-          "en": "Free Text Payment EN"
-        }
-      ]
+  bank_transfer: {
+    bank: 'bca',
+    va_number: '11111111',
+    free_text: {
+      inquiry: [{ id: 'Free Text Inquiry ID', en: 'Free Text Inquiry EN' }],
+      payment: [{ id: 'Free Text Payment ID', en: 'Free Text Payment EN' }]
     }
   },
-  "bca": {
-      "sub_company_code": "000"
-    }
+  bca: {
+    sub_company_code: '000'
+  }
 }
 
-bca_virtual_account_charge = midtrans.bca_virtual_account_charge.post(charge_params)
-#=> bca_virtual_account_charge returns MidtransApiMidtransApi::Model::BcaVirtualAccount::Charge instance
+charge = midtrans.bca_virtual_account_charge.post(charge_params)
+# Returns: MidtransApi::Model::BcaVirtualAccount::Charge
+```
+
+#### Other Bank Virtual Accounts
+
+Supported banks: Permata, BNI, BRI, CIMB
+
+```ruby
+charge_params = {
+  payment_type: 'bank_transfer',
+  transaction_details: {
+    gross_amount: 10000,
+    order_id: 'order-104'
+  },
+  customer_details: {
+    email: 'budi.utomo@midtrans.com',
+    first_name: 'Budi',
+    last_name: 'Utomo',
+    phone: '+6281 1234 1234'
+  },
+  item_details: [
+    {
+      id: '1388998298204',
+      price: 5000,
+      quantity: 1,
+      name: 'Item A'
+    },
+    {
+      id: '1388998298205',
+      price: 5000,
+      quantity: 1,
+      name: 'Item B'
+    }
+  ],
+  bank_transfer: {
+    bank: 'bni',  # Options: bni, bri, permata, cimb
+    va_number: '111111'
+  }
+}
+
+charge = midtrans.charge_transaction.post(charge_params, 'bank_transfer')
+# Returns: MidtransApi::Model::Transaction::Charge
+```
+
+#### Mandiri Bill Payment (E-Channel)
+
+```ruby
+charge_params = {
+  payment_type: 'echannel',
+  transaction_details: {
+    order_id: 'order-105',
+    gross_amount: 95000
+  },
+  item_details: [
+    {
+      id: 'a1',
+      price: 50000,
+      quantity: 2,
+      name: 'Apel'
+    },
+    {
+      id: 'a2',
+      price: 45000,
+      quantity: 1,
+      name: 'Jeruk'
+    }
+  ],
+  echannel: {
+    bill_info1: 'Payment For:',
+    bill_info2: 'Debt',
+    bill_key: '081211111111'
+  }
+}
+
+charge = midtrans.charge_transaction.post(charge_params, 'echannel')
+# Returns: MidtransApi::Model::Transaction::Charge
+```
+
+### Transaction Management
+
+#### Check Transaction Status
+
+```ruby
+status = midtrans.status.get(order_id: 'order-101')
+# Returns: MidtransApi::Model::Check::Status
+
+# Access response attributes
+puts status.transaction_status  # e.g., 'settlement', 'pending', 'cancel'
+puts status.order_id
+puts status.gross_amount
 ```
 
 #### Expire Transaction
+
 ```ruby
-expire_response = midtrans.expire_transaction.post(order_id: "eb046679-285a-4136-8977-e4c429cc3254")
-#=> expire_response returns MidtransApiMidtransApi::Model::Transaction::Expire instance
+expire_response = midtrans.expire_transaction.post(order_id: 'order-101')
+# Returns: MidtransApi::Model::Transaction::Expire
 ```
 
-#### Charge Transaction
-Charge Transaction Payment Method: **Bank Transfer**
-_Bank Transfer_ is one of the payment methods offered by Midtrans. By using this method, your customers can make a payment via bank transfer and Midtrans will send real time notification when the payment is completed.
+#### Custom Expiry
 
-A list of bank transfer payment methods supported by Midtrans is given below.
-
-- Permata Virtual Account
-- BCA Virtual Account (Please refer to BCA Virtual Account Charge section)
-- Mandiri Bill Payment
-- BNI Virtual Account
-- BRI Virtual Account
-- CIMB Virtual Account
-
-##### Charge transaction
 ```ruby
-# "payment_type" => required <"bank_transfer"|"echannel">
-# "transaction_details" => required
-# "customer_details" => optional
-# "item_details" => optional
-# "bank_transfer"|"echannel" => required
-charge_params_bank_transfer = {
-    "payment_type": "bank_transfer",
-    "transaction_details": {
-        "gross_amount": 10000,
-        "order_id": "{{$timestamp}}" # specified by you
-    },
-    "customer_details": {
-        "email": "budi.utomo@Midtrans.com",
-        "first_name": "budi",
-        "last_name": "utomo",
-        "phone": "+6281 1234 1234"
-    },
-    "item_details": [
-    {
-       "id": "1388998298204",
-       "price": 5000,
-       "quantity": 1,
-       "name": "Ayam Zozozo"
-    },
-    {
-       "id": "1388998298205",
-       "price": 5000,
-       "quantity": 1,
-       "name": "Ayam Xoxoxo"
-    }
-   ],
-   "bank_transfer":{
-     "bank": "bni|bri|permata|cimb",
-     "va_number": "111111"
+charge_params = {
+  payment_type: 'bank_transfer',
+  bank_transfer: {
+    bank: 'permata'
+  },
+  transaction_details: {
+    order_id: 'order-106',
+    gross_amount: 145000
+  },
+  custom_expiry: {
+    order_time: '2024-12-07 11:54:12 +0700',  # Optional: defaults to current time
+    expiry_duration: 60,
+    unit: 'minute'  # Options: second, minute, hour, day
   }
 }
 
-charge_params_echannel = {
-    "payment_type": "echannel",
-    "transaction_details": {
-        "order_id": "1388", # specified by you
-        "gross_amount": 95000
-        },
-    "item_details": [
-        {
-          "id": "a1",
-          "price": 50000,
-          "quantity": 2,
-          "name": "Apel"
-        },
-        {
-         "id": "a2",
-          "price": 45000,
-          "quantity": 1,
-          "name": "Jeruk"
-        }
-    ],
-    "echannel": {
-        "bill_info1": "Payment For:",
-        "bill_info2": "debt",
-        "bill_key": "081211111111"
+charge = midtrans.charge_transaction.post(charge_params, 'bank_transfer')
+# Returns: MidtransApi::Model::Transaction::Charge
+```
+
+### Merchant Management
+
+#### Create Merchant
+
+```ruby
+merchant_params = {
+  email: 'merchant@midtrans.com',
+  merchant_name: 'My Merchant',
+  callback_url: 'https://merchant.com/midtrans-callback',
+  notification_url: 'https://merchant.com/midtrans-notification',
+  pay_account_url: 'https://merchant.com/pay-account-notification',
+  owner_name: 'Owner Name',
+  merchant_phone_number: '81211111111',
+  mcc: 'Event',
+  entity_type: 'corporate',
+  business_name: 'PT Business Name'
+}
+
+merchant = midtrans.merchant.post(merchant_params, 'partner_id')
+# Returns: MidtransApi::Model::Merchant::Create
+```
+
+#### Update Merchant Notification URLs
+
+```ruby
+notification_params = {
+  payment_notification_url: 'https://merchant.com/payment-notification',
+  iris_notification_url: 'https://merchant.com/payout-notification',
+  recurring_notification_url: 'https://merchant.com/recurring-notification',
+  pay_account_notification_url: 'https://merchant.com/pay-account-notification',
+  finish_payment_redirect_url: 'https://merchant.com/payment-finish'
+}
+
+response = midtrans.merchant_update_notification.patch(
+  notification_params,
+  'partner_id',
+  'merchant_id'
+)
+# Returns: MidtransApi::Model::Merchant::UpdateNotification
+```
+
+### Disbursements
+
+#### Create Payout
+
+```ruby
+payout_params = {
+  payouts: [
+    {
+      beneficiary_name: 'John Doe',
+      beneficiary_account: '1234567890',
+      beneficiary_bank: 'bca',
+      beneficiary_email: 'john@example.com',
+      amount: 100000,
+      notes: 'Payout for invoice #123'
     }
+  ]
 }
 
-charge_response = midtrans.charge_transaction.post(charge_params_bank_transfer, "bank_transfer") # => payment type bank_transfer
-charge_response = midtrans.charge_transaction.post(charge_params_echannel, "echannel") # => payment type echannel
-#=> charge_response returns MidtransApiMidtransApi::Model::Transaction::Charge instance
+payout = midtrans.payout.post(payout_params)
+# Returns: MidtransApi::Model::Disbursement::Payout
 ```
 
-#### Charge Transaction with Custom Expiry
+### Utilities
+
+#### Check Balance
+
 ```ruby
-charge_params_with_custom_expiry = {
-  "payment_type": "bank_transfer",
-  "bank_transfer": {
-    "bank": "permata"
-  },
-  "transaction_details": {
-    "order_id": "C17550",
-    "gross_amount": 145000
-  },
-  "custom_expiry": {
-      "order_time": "2016-12-07 11:54:12 +0700", # If not defined, expiry time starts from transaction time.
-      "expiry_duration": 60,
-      "unit": "second|minute|hour|day" # default is minute
-  }
-}
-
-charge_response = midtrans.charge_transaction.post(charge_params_with_custom_expiry, "bank_transfer|echannel")
-#=> charge_response returns MidtransApiMidtransApi::Model::Transaction::Charge instance
+balance = midtrans.balance.get
+# Returns: MidtransApi::Model::Check::Balance
 ```
 
-#### Check Status Payment
+#### List Channels
+
 ```ruby
-dummy_order_id = "order-with-gopay"
-check_status = midtrans.status.get(order_id: dummy_order_id)
-#=> check_status returns MidtransApi::Model::Check::Status
+channels = midtrans.channel.get('partner_id', 'merchant_id')
+# Returns: Array of channels with virtual account information
 ```
 
-About official documentation api of Midtrans API, see [API doc](https://api-docs.midtrans.com/)
+## Error Handling
 
-### Errors (Sample)
-MidtransApi can raise conditional Errors explained from Midtrans Documentation.
-About available Status Code, see [Midtrans API doc](https://api-docs.midtrans.com/#status-code)
+The gem raises custom exceptions for various error scenarios:
+
+```ruby
+begin
+  charge = midtrans.gopay_charge.post(charge_params)
+rescue MidtransApi::Errors::ApiError => e
+  puts "API Error: #{e.message}"
+  puts "Status Code: #{e.status_code}"
+rescue MidtransApi::Errors::AuthenticationError => e
+  puts "Authentication failed: #{e.message}"
+rescue MidtransApi::Errors::ValidationError => e
+  puts "Validation failed: #{e.message}"
+end
+```
+
+For more information about status codes and error handling, see the [Midtrans API documentation](https://api-docs.midtrans.com/#status-code).
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run the following to set up your development environment:
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+```bash
+$ bin/setup              # Install dependencies
+$ rake spec              # Run all tests
+$ bin/console            # Interactive console for experimentation
+```
+
+### Running Specific Tests
+
+```bash
+$ bundle exec rspec spec/path/to/file_spec.rb       # Run specific test file
+$ bundle exec rspec spec/path/to/file_spec.rb:42    # Run test at specific line
+```
+
+### Building and Installing Locally
+
+```bash
+$ bundle exec rake install   # Install gem locally
+$ bundle exec rake release   # Release new version (creates git tag, pushes to rubygems)
+```
+
+## API Documentation
+
+For complete API documentation and reference, visit:
+- [Midtrans API Documentation](https://api-docs.midtrans.com/)
+- [Midtrans Dashboard](https://dashboard.midtrans.com/)
 
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/mekari-engineering/midtrans_api_ruby.
 
+To contribute:
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/my-new-feature`)
+3. Write tests for your changes
+4. Ensure all tests pass (`rake spec`)
+5. Commit your changes (`git commit -am 'Add some feature'`)
+6. Push to the branch (`git push origin feature/my-new-feature`)
+7. Create a Pull Request
 
 ## License
 
